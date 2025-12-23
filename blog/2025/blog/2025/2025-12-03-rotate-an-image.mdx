@@ -1,0 +1,99 @@
+---
+slug: blog/2025/rotate-an-image
+title: Rotate an Image
+authors: [luckystar]
+tags: [jstask, 2025, Matrix]
+date: 2025-12-03
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+#### Example 1
+
+* **Input:** `matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]`
+* **Output:** `[[7, 4, 1], [8, 5, 2], [9, 6, 3]]`
+
+**Visualization:**
+
+| Original Matrix | Rotated 90° Clockwise |
+| :---: | :---: | 
+| 1 2 3 | 7 4 1 |
+| 4 5 6 | 8 5 2 |
+| 7 8 9 | 9 6 3 |
+
+#### Example 2
+
+* **Input:** `matrix = [[5, 1, 9, 11], [2, 4, 8, 10], [13, 3, 6, 7], [15, 14, 12, 16]]`
+* **Output:** `[[15, 13, 2, 5], [14, 3, 4, 1], [12, 6, 8, 9], [16, 7, 10, 11]]`
+
+---
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    ## 💡 Optimal Approach: The Two-Step Strategy
+
+The most efficient and common way to achieve a 90-degree **clockwise** rotation *in place* is by using two linear transformation steps:
+
+### Step 1: Transpose the Matrix
+
+Flip the matrix over its main diagonal. The element at position [i][j] is swapped with the element at [j][i].
+
+* **Key:** To avoid swapping elements back to their original positions (undoing the work), you must only iterate over the **upper triangle** of the matrix (where the column index `j` is greater than or equal to the row index `i`).
+
+### Step 2: Reverse Each Row
+
+After transposing, the matrix is rotated 90 degrees counter-clockwise. To complete the clockwise rotation, simply reverse the elements in every single row.
+
+* **Result:** After these two steps, the matrix is fully rotated 90 degrees clockwise.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+let rotate = function(m) {
+    const N = m.length; // Store matrix dimension for clarity
+
+    // --- Step 1: Transpose the Matrix (Swap m[i][j] with m[j][i]) ---
+    
+    // Iterate through the rows (i).
+    for (let i = 0; i < N; i++) { 
+        // Iterate only through the upper triangle (j starts at i). 
+        // This is crucial to perform the swap only once for each pair 
+        // and prevent the swap from being immediately undone later in the loop.
+        for (let j = i; j < N; j++) {            
+            // Perform the swap (Transposition)
+           // let temp = m[i][j];
+           // m[i][j] = m[j][i];
+           // m[j][i] = temp;
+
+          [m[i][j], m[j][i]] = [m[j][i], m[i][j]];
+
+        }
+    }
+
+    // --- Step 2: Reverse Each Row (Completes the 90-degree clockwise rotation) ---
+    
+    // After transposition, the matrix is rotated 90 degrees counter-clockwise.
+    // Reversing each row completes the final 90-degree clockwise rotation.
+    for (let i = 0; i < N; i++) {
+        // Use the built-in Array.prototype.reverse() method for efficiency.
+        m[i].reverse(); 
+    }
+    
+    // The matrix 'm' has been rotated in place.
+    return m;
+};
+
+rotate([[1,2,3],[4,5,6],[7,8,9]])
+
+```
+</TabItem>
+
+</Tabs>
+

@@ -1,0 +1,116 @@
+---
+slug: blog/2025/boats-to-save-people
+title: Boats to Save People
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two-Pointer]
+date: 2025-11-24
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+You are given an array people where people[i] is the weight of the ith person, and an infinite number of boats where each boat can carry a maximum weight of limit. Each boat carries at most two people at the same time, provided the sum of the weight of those people is at most limit.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* **Input:** `people = [1, 2]`, `limit = 3`
+* **Output:** `1`
+* **Explanation:** One boat is needed to carry both people since 1 + 2 = 3, which is 3.
+    * **Boats:** `(1, 2)`
+
+#### Example 2
+
+* **Input:** `people = [3, 2, 2, 1]`, `limit = 3`
+* **Output:** `3`
+* **Explanation:** After sorting to `[1, 2, 2, 3]`, the optimal pairings are:
+    1.  The heaviest (3) goes alone.
+    2.  The remaining lightest (1) pairs with the remaining heaviest (2).
+    3.  The last person (2) goes alone.
+    * **Boats:** `(3)`, `(1, 2)`, `(2)`
+
+#### Example 3
+
+* **Input:** `people = [3, 5, 3, 4]`, `limit = 5`
+* **Output:** `4`
+* **Explanation:** After sorting to `[3, 3, 4, 5]`. Since the heaviest person (5) cannot pair with the lightest person (3) (5 + 3 = 8 > 5), everyone must go alone.
+    * **Boats:** `(3)`, `(3)`, `(4)`, `(5)`
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+  ## 🚢 Boat Rescue: Greedy Two-Pointer Approach
+
+This is a classic problem that can be solved very efficiently using a **Greedy Algorithm** combined with a **Two-Pointer** technique, after an initial sort.
+
+The goal is to **minimize the total number of boats** used. To achieve this, the greedy strategy is to consistently try to pair the **heaviest remaining person** with the **lightest possible partner** that still fits the weight limit.
+
+---
+
+### 1. ⚙️ Sort the Input Array
+
+The first and most crucial step is to **sort the `people` array in non-decreasing (ascending) order**.
+Sorting allows you to instantly access the lightest person (at the beginning of the array) and the heaviest person (at the end of the array) at any point. This arrangement is essential for the greedy strategy.
+
+### 2. 🎣 Implement the Two-Pointer Strategy
+
+After sorting, we initialize two pointers and a counter:
+
+* **`left` pointer:** Starts at index `0`, pointing to the **lightest** person.
+* **`right` pointer:** Starts at `people.length - 1`, pointing to the **heaviest** person.
+* **`boats` counter:** Initialized to `0`.
+
+#### The Core Loop
+
+We iterate while the left pointer is less than or equal to the right pointer (`left <= right`). In each iteration, we check if we can pair the heaviest person (`right`) with the lightest person (`left`). 
+
+##### **Case 1: Paired Boat** (Heaviest + Lightest $\le$ Limit)
+
+If `people[left] + people[right] <= limit`:
+
+1.  This is an **optimal pairing**. We put both the heaviest person (`right`) and the lightest person (`left`) on one boat.
+2.  Increment the `boats` counter.
+3.  Move the **`left` pointer one step to the right** (`left++`), as the lightest person is now seated.
+4.  Move the **`right` pointer one step to the left** (`right--`), as the heaviest person is now seated.
+
+##### **Case 2: Single Boat** (Heaviest + Lightest $> $ Limit)
+
+If `people[left] + people[right] > limit`:
+
+1.  The lightest person (`left`) is too heavy to ride with the heaviest person (`right`). Since the `right` person is the heaviest remaining, no one else will be a better partner for them.
+2.  The greedy choice is to put the **heaviest person (`right`) on a boat alone**. This maximizes the chances that the lighter people (`left` and beyond) can be paired up later.
+3.  Increment the `boats` counter.
+4.  Move the **`right` pointer one step to the left** (`right--`), as the heaviest person is now seated.
+5.  The **`left` pointer does not move**, as the lightest person is still waiting for a boat.
+
+
+
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function boats(p, lim) {
+    let c = 0;
+    p.sort((a,b)=> a-b)
+    let l = 0;
+    let r = p.length-1
+
+    while (l <= r) {
+        c += 1; // A boat is always launched for the heaviest person (p[r])
+        
+        // Check if the lightest person (p[l]) can fit with the heaviest (p[r])
+        if (p[l] + p[r] <= lim) {
+            l++; // If paired, the lightest person is also seated
+        }
+        // Whether paired or alone, the heaviest person is always seated
+        r--; 
+    }
+    return c;
+};
+
+```
+</TabItem>
+
+</Tabs>
+

@@ -1,0 +1,189 @@
+---
+slug: blog/2025/next-permutation
+title: Next Permutation
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Permutation]
+date: 2025-12-11
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Next Permutation Problem Definition
+
+A **permutation** of an array of integers is an arrangement of its members into a sequence or linear order.
+
+For example, for `arr = [1,2,3]`, the following are all the permutations of `arr`: `[1,2,3]`, `[1,3,2]`, `[2, 1, 3]`, `[2, 3, 1]`, `[3,1,2]`, `[3,2,1]`.
+
+The **next permutation** of an array of integers is the next lexicographically greater permutation of its integer. More formally, if all the permutations of the array are sorted in one container according to their lexicographical order, then the **next permutation** of that array is the permutation that follows it in the sorted container.
+
+If such arrangement is not possible, the array must be rearranged as the lowest possible order (i.e., sorted in ascending order).
+
+### Examples
+
+* The next permutation of `arr = [1,2,3]` is `[1,3,2]`.
+* Similarly, the next permutation of `arr = [2,3,1]` is `[3,1,2]`.
+* While the next permutation of `arr = [3,2,1]` is `[1,2,3]` because `[3,2,1]` does not have a lexicographical larger rearrangement.
+
+### Task Constraints
+
+Given an array of integers `nums`, find the next permutation of `nums`.
+
+> The replacement must be **in place** and use only **constant extra memory**.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+#### **Example 1: Simple Swap and Reverse**
+
+* **Input: `nums`** = `[1, 2, 3]`
+* **Output** = `[1, 3, 2]`
+
+#### **Example 2: Largest Permutation (Edge Case)**
+
+* **Input: `nums`** = `[3, 2, 1]`
+* **Output** = `[1, 2, 3]`
+
+#### **Example 3: Swap and Reverse Required**
+
+* **Input: `nums`** = `[1, 1, 5]`
+* **Output** = `[1, 5, 1]`
+</TabItem>
+
+
+<TabItem value="notes" label="Notes" >
+
+## 🎯 Core Logic: Finding the Next Permutation
+
+The algorithm works by finding the smallest modification needed on the right side of the array to produce a larger number.
+
+### 1. Identifying the "Needle" (The Pivot)
+
+This step finds the rightmost digit that **must** be increased to achieve the next largest permutation.
+
+* **The Problem Area:** Start from the right. If a sequence of digits is in **descending order** (e.g., `[9, 7, 5, 3]`), it's the largest possible arrangement for those digits. To make the number larger, we must look left.
+* **The Goal:** Find the very last index **i** (the **Pivot**) where `nums[i] < nums[i + 1]`. 
+
+> **Example:** In `[5, 3, 4, **9, 7, 6**]`, the suffix `[9, 7, 6]` is descending. We scan left: `4` is less than `9`.
+> * **Pivot Found:** i = 2 (the digit `4`).
+
+### 2. Performing the "Smallest Jump" (The Swap)
+
+This step executes the minimal necessary increase in the number's value.
+
+* **The Goal:** Swap the pivot (i) with a digit from the descending tail that is **just slightly larger** than the pivot.
+* **The Method:** Scan the tail (right of i) from the far right until you find the first digit (j) that is greater than the pivot.
+* **The "Why":** Swapping with this specific digit guarantees the **smallest possible increase** in value.
+
+> **Example:** Continuing from `[5, 3, **4**, 9, 7, 6]`. The pivot is `4`.
+> * We scan the tail `[9, 7, 6]` from the right. The first digit greater than `4` is `6` (at j=5).
+> * **Swap:** Swap `4` and `6`. Array state: `[5, 3, **6**, 9, 7, 4]`
+
+### 3. Minimizing the Damage (The Reverse)
+
+This step ensures the resulting number is the true *next* permutation (the smallest value possible after the jump).
+
+* **The Goal:** Arrange the tail segment (from i+1 to the end) to form the **smallest possible number** it can.
+* **The Method:** Since the tail was in descending order before the swap, **reversing the entire tail subarray** efficiently sorts it into ascending order. 
+* **The "Why":** Ascending order represents the minimum value for those digits, ensuring the resulting permutation is the true "next" one.
+
+> **Example:** Continuing from `[5, 3, 6, **9, 7, 4**]`. The tail is `[9, 7, 4]`.
+> * **Reverse:** Reverse the tail to get `[4, 7, 9]`.
+> * **Final Result:** `[5, 3, 6, 4, 7, 9]`
+---
+
+### 📝 Key Things to Remember
+
+* **Constraints are Clues:** The requirement for **O(1) extra space** and **O(N) time** eliminates general sorting and copying, forcing you toward the in-place **Reverse and Swap** method.
+* **Right-to-Left Search:** Always start the search from the right, as lexicographical changes on the right side have the smallest impact on the overall number's value.
+* **Edge Case:** The biggest possible permutation is one sorted in descending order (e.g., `[9, 8, 7]`). If your pivot search fails, the only step required is to **reverse the entire array** to achieve the lowest order (e.g., `[7, 8, 9]`).
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Finds the next lexicographically greater permutation of the given array 'nums' in place.
+ * This is achieved by the "Three-Step Reverse and Swap" algorithm.
+ */
+let nextPermutation = function(nums) {
+    let n = nums.length;
+    let pi = -1; // Pivot Index (pi): index of the element to be swapped
+    let ln = -1; // Largest-Next Index (ln): index of the element to swap with the pivot
+
+    // -----------------------------------------------------------------
+    // Step 1: Find the RIGHTMOST pivot (pi)
+    // Find the first index 'i' from the right such that nums[i] < nums[i + 1].
+    // This breaks the longest descending suffix.
+    // -----------------------------------------------------------------
+    for (let i = n - 2; i >= 0; i--) {
+        if (nums[i] < nums[i + 1]) {
+            pi = i; // Found the pivot
+            break;  // Critical: Stop immediately to get the RIGHTMOST index
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Edge Case: If no pivot was found (pi remains -1), the array is fully descending 
+    // (the largest permutation). Reverse the entire array for the lowest order.
+    // -----------------------------------------------------------------
+    if (pi === -1) {
+        nums.reverse();
+        return nums;
+    }
+
+    // -----------------------------------------------------------------
+    // Step 2: Find the element 'ln' to swap with the pivot.
+    // Scan from the far right to find the smallest element > nums[pi].
+    // -----------------------------------------------------------------
+    for (let j = n - 1; j > pi; j--) {
+        if (nums[j] > nums[pi]) {
+            ln = j;
+            break; // Critical: Stop immediately to ensure 'ln' is the *smallest* element greater than pi
+        }
+    }
+
+    // Perform the Swap of the pivot (pi) and the next-largest element (ln)
+    let temp = nums[pi];
+    nums[pi] = nums[ln];
+    nums[ln] = temp;
+
+    // -----------------------------------------------------------------
+    // Step 3: Reverse the tail.
+    // Reverse the subarray starting from pi + 1 to the end (n - 1).
+    // Since the tail was in descending order, reversing it sorts it ascendingly (O(N) time).
+    // -----------------------------------------------------------------
+    let start = pi + 1;
+    let end = n - 1;
+
+    while (start < end) {
+        let temp2 = nums[start];
+        nums[start] = nums[end];
+        nums[end] = temp2;
+        start++;
+        end--;
+    }
+    // -----------------------------------------------------------------
+
+    return nums;
+};
+
+// --- Function Output ---
+// Input: [9, 4, 6, 7, 2, 6]
+
+// 1. Find Pivot: pi = 4 (value 2) because 2 < 6 (at index 5) 
+// 2. Find Swap: ln = 5 (value 6) because 6 > 2 (first from right)
+// 3. Swap: [9, 4, 6, 7, 6, 2]
+// 4. Reverse Tail (from index 5): [2] is reversed.
+
+console.log(nextPermutation([9, 4, 6, 7, 2, 6]));
+
+Output: [9, 4, 6, 7, 6, 2]
+```
+</TabItem>
+
+
+
+
+</Tabs>
+

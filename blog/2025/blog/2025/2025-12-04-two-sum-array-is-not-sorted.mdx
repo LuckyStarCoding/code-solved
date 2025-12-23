@@ -1,0 +1,101 @@
+---
+slug: blog/2025/two-sum-array-is-not-sorted
+title: Two Sum (array is not sorted)
+authors: [luckystar]
+tags: [jstask, 2025, Array, Map]
+date: 2025-12-04
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+You can return the answer in any order.
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+### Example 1
+
+* **Input:** `nums = [2, 7, 11, 15]`, `target = 9`
+* **Output:** `[0, 1]`
+
+**Explanation:** Because `nums[0]` (which is 2) + `nums[1]` (which is 7) equals 9, we return their indices: `[0, 1]`.
+
+### Example 2
+
+* **Input:** `nums = [3, 2, 4]`, `target = 6`
+* **Output:** `[1, 2]`
+
+**Explanation:** `nums[1]` (which is 2) + `nums[2]` (which is 4) equals 6.
+
+### Example 3
+
+* **Input:** `nums = [3, 3]`, `target = 6`
+* **Output:** `[0, 1]`
+
+**Explanation:** `nums[0]` (which is 3) + `nums[1]` (which is 3) equals 6.
+</TabItem>
+<TabItem value="notes" label="Notes" >
+ ## 💡 Optimal Approach: Hash Map
+
+The most efficient solution is to use a **Hash Map** (or JavaScript `Map` object). This approach ensures a time complexity of **O(N)** by checking for the complement in constant time. 
+
+1.  Iterate through the `nums` array only once.
+2.  For each number `n` at index `i`, calculate the **complement** needed: `complement = target - n`.
+3.  Check if the `complement` already exists as a **key** in the Map.
+    * If **yes**, the solution is found: return the index stored with the `complement` and the current index `i`.
+    * If **no**, store the current number `n` as the key and its index `i` as the value: `Map.set(n, i)`.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Function to find the indices of two numbers in an array 'nums' that sum up to 't' (target).
+ * This uses the optimized single-pass Hash Map approach (O(N) time complexity).
+ * @param {number[]} nums - The input array of integers.
+ * @param {number} t - The target sum.
+ * @returns {number[]} - The indices [index1, index2] of the two numbers.
+ */
+let twoSum = function(nums, t) {
+    // 'm' (map) stores the required complements needed for future numbers.
+    // Map structure: { complement_value: index_of_the_first_number }
+    let m = new Map();
+
+    // Iterate through the array once.
+    for (let i = 0; i < nums.length; i++) {
+        // --- Step 1: Check if the current number completes a previously stored complement ---
+        
+        // Check if the current number (nums[i]) exists as a key in the map.
+        // If it does, it means this current number is the complement we needed 
+        // for a number processed earlier in the array.
+        if (m.has(nums[i])) {
+            // Solution found! Return the stored index of the first number (the complement)
+            // and the current index (i).
+            return [m.get(nums[i]), i];
+        }
+        
+        // --- Step 2: Prepare for future numbers ---
+
+        // If no match is found yet, calculate the 'complement' (the value needed
+        // to reach the target with the current number).
+        let complement = t - nums[i];
+        
+        // Store the complement as the key, and the current index 'i' as the value.
+        // This sets up the map to detect a solution when the complement (the key) 
+        // is encountered later in the array.
+        m.set(complement, i);
+    }
+
+    // Note: Since the problem guarantees a solution, this line is typically unreachable, 
+    // but the function definition currently returns the empty array if no return occurred in the loop.
+    return [];
+};
+
+twoSum([2, 7, 11, 15], 9)
+
+```
+</TabItem>
+
+</Tabs>
+

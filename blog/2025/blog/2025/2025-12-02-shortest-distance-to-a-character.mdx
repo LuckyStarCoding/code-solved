@@ -1,0 +1,121 @@
+---
+slug: blog/2025/shortest-distance-to-a-character
+title: Shortest Distance to a Character
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two-Pass Strategy]
+date: 2025-12-02
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+You are given a string `s` and a character `c` that is guaranteed to appear at least once in `s`.
+
+The goal is to return an array of integers, `answer`, where the length of `answer` is equal to the length of `s`. Each element `answer[i]` must represent the **distance** from index `i` to the **closest** occurrence of the character `c` in the string.
+
+The distance between two indices, `i` and `j`, is calculated using the absolute value: `distance = abs(i - j)`.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+### Example 1
+
+* **Input:** `s = "loveleetcode"`, `c = "e"`
+* **Output:** `[3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]`
+
+**Explanation Breakdown:**
+
+The character 'e' is located at indices **3, 5, 6, and 11**.
+
+* For index **0** ('l'), the closest 'e' is at index 3. Distance: `abs(0 - 3) = 3`.
+* For index **4** ('t'), the closest 'e' is equally distant on both sides: index 3 (`abs(4 - 3) = 1`) and index 5 (`abs(4 - 5) = 1`). The result is 1.
+* For index **8** ('c'), the closest 'e' is at index 6. Distance: `abs(8 - 6) = 2`.
+
+### Example 2
+
+* **Input:** `s = "aaab"`, `c = "b"`
+* **Output:** `[3, 2, 1, 0]`
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    ## 💡 Optimal Approach: The Two-Pass Strategy
+
+The difficulty in this problem is that the closest character `c` can be either **before** (to the left) or **after** (to the right) the current index.
+
+To solve this efficiently in **O(N) time**, we use two separate linear passes over the string to check both directions and take the minimum result.
+
+### Pass 1: Distance to the Left
+
+* **Goal:** Calculate the distance to the most recent occurrence of `c`.
+* **Method:** Iterate from left to right, tracking the index of the `last seen c` (`prev`). The distance is `i - prev`.
+
+### Pass 2: Distance to the Right
+
+* **Goal:** Compare the stored distance (from Pass 1) with the distance to the next occurrence of `c`.
+* **Method:** Iterate from right to left, tracking the index of the `next seen c` (`next`). We update the result: `result[i] = min(result[i], next - i)`.
+
+This ensures that every index holds the absolute minimum distance to any `c` in the string.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Function to find the shortest distance from every character in 's' 
+ * to the closest occurrence of the character 'c'.
+ * This uses the efficient O(N) Two-Pass approach.
+ * * @param {string} s - The input string.
+ * @param {character} c - The target character.
+ * @returns {number[]} - An array of minimum distances.
+ */
+let shortestToChar = function(s, c) {
+    const N = s.length;
+    // 'a' (answer/result) array is initialized to store the distance values.
+    let a = new Array(N);
+    
+    // --- PASS 1: LEFT-TO-RIGHT SCAN (Finds distance to the nearest 'c' on the LEFT) ---
+    
+    // 'prev' stores the index of the last seen character 'c'.
+    // Initialize to -Infinity so that the distance calculation (i - prev)
+    // for the initial segment (before the first 'c') results in a very large number.
+    let prev = -Infinity;
+    
+    for (let i = 0; i < N; i++) {
+        // If the current character is the target 'c', update its last seen position.
+        if (s[i] === c) {
+            prev = i;
+        }
+        // Store the distance to the closest 'c' on the left side.
+        // This value is saved for comparison in the next pass.
+        a[i] = i - prev;
+    }
+
+    // --- PASS 2: RIGHT-TO-LEFT SCAN (Compares with distance to the nearest 'c' on the RIGHT) ---
+    
+    // 'next' stores the index of the next seen character 'c'.
+    // Initialize to +Infinity so that the distance calculation (next - i)
+    // for the final segment results in a very large number.
+    let next = Infinity;
+    
+    for (let i = N - 1; i >= 0; i--) {
+        // If the current character is the target 'c', update its next seen position.
+        if (s[i] === c) {
+            next = i;
+        }
+        
+        // Calculate the distance to the closest 'c' on the right side (next - i).
+        // Update the result 'a[i]' by taking the minimum distance:
+        // either the distance previously found (to the left) or the newly found distance (to the right).
+        a[i] = Math.min(a[i], next - i);
+    }
+    
+    // 'a' now contains the shortest distance for every index.
+    return a;
+};
+
+shortestToChar("loveleetcode", 'e')
+
+```
+</TabItem>
+
+</Tabs>
+

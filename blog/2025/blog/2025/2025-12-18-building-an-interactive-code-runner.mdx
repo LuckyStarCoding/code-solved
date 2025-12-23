@@ -1,0 +1,236 @@
+---
+slug: blog/2025/building-an-interactive-code-runner
+title: Building an Interactive Code Runner
+authors: [luckystar]
+tags: [Tutorial, React, Docusaurus, JavaScript]
+date: 2025-12-18
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Building an Interactive Code Runner in Docusaurus
+
+This guide walks through the process of adding an interactive code editor to your documentation, starting from installation to solving advanced environment conflicts.
+
+## 📦 Step 1: Install Dependencies
+
+First, you need to install the libraries that power the live editor. Open your terminal at the root of your project (`my-website`) and run:
+
+`powershell
+npm install react-live prism-react-renderer
+`
+
+## 🎨 Step 2: Create CSS for the New Component
+
+Create a new file at src/css/live-editor.css (or add this to your existing custom.css):
+```
+CSS
+
+/* Container for the whole editor */
+.live-code-container {
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Header/Editor area */
+.live-code-editor-wrapper {
+  background-color: #1e1e1e;
+  padding: 5px;
+}
+
+/* Button Bar */
+.live-code-controls {
+  padding: 10px;
+  background-color: #2d2d2d;
+  border-top: 1px solid #444;
+  display: flex;
+  gap: 10px;
+}
+
+/* Button Styles */
+.live-btn {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.live-btn:hover {
+  opacity: 0.8;
+}
+
+.live-btn-run {
+  background-color: #25c2a0;
+}
+
+.live-btn-reset {
+  background-color: #666;
+}
+
+/* Error and Output areas */
+.live-code-error {
+  background-color: #ffeef0;
+  color: #d73a49;
+  padding: 10px;
+  font-size: 13px;
+}
+
+.live-code-output {
+  padding: 15px;
+  background-color: #fff;
+  color: #000;
+}
+
+.live-code-label {
+  color: #666;
+  font-weight: bold;
+}
+```
+
+## 🏗️ Step 3: Create the LiveCode Component
+
+To handle Server-Side Rendering (SSR) in Docusaurus, create your component using the following structure:
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+// Import the new CSS file
+import './live-editor.css'; 
+
+const LiveCodeEditor = ({ code: initialCode }) => {
+  const [EditorTools, setEditorTools] = useState(null);
+  const [editorCode, setEditorCode] = useState(initialCode.trim());
+  const [runCode, setRunCode] = useState(initialCode.trim());
+
+  useEffect(() => {
+    const tools = require('react-live');
+    setEditorTools(tools);
+  }, []);
+
+  if (!EditorTools) return <div className="live-code-output">Loading Editor...</div>;
+
+  const { LiveProvider, LiveEditor, LiveError, LivePreview } = EditorTools;
+
+  const handleReset = () => {
+    const cleanCode = initialCode.trim();
+    setEditorCode(cleanCode);
+    setRunCode(cleanCode);
+  };
+
+  return (
+    <div className="live-code-container">
+      <LiveProvider code={runCode} noInline={true}>
+        
+        <div className="live-code-editor-wrapper">
+          <LiveEditor 
+            code={editorCode} 
+            onChange={code => setEditorCode(code)} 
+            style={{ fontFamily: 'monospace', fontSize: '14px' }} 
+          />
+        </div>
+
+        <div className="live-code-controls">
+          <button onClick={() => setRunCode(editorCode)} className="live-btn live-btn-run">
+            ▶ Run Code
+          </button>
+          <button onClick={handleReset} className="live-btn live-btn-reset">
+            ↺ Reset
+          </button>
+        </div>
+
+        <LiveError className="live-code-error" />
+        
+        <div className="live-code-output">
+          <span className="live-code-label">Output:</span>
+          <hr style={{ margin: '10px 0', opacity: '0.1' }} />
+          <LivePreview />
+        </div>
+      </LiveProvider>
+    </div>
+  );
+};
+
+export default function LiveCode(props) {
+  return <BrowserOnly>{() => <LiveCodeEditor {...props} />}</BrowserOnly>;
+}
+```
+
+## ⚙️ Step 4: Configure Webpack Alias (The Essential Fix)
+To prevent the TypeError: Cannot read properties of null (reading 'useState'), we must force the project to use a single instance of React.
+Update: `docusaurus.config.js`
+
+
+```jsx
+const path = require('path');
+
+const config = {
+  // ... existing config (title, url, etc.)
+
+  plugins: [
+    () => ({
+      name: 'resolve-react',
+      configureWebpack() {
+        return {
+          resolve: {
+            alias: {
+              react: path.resolve(__dirname, 'node_modules/react'),
+              'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+            },
+          },
+        };
+      },
+    }),
+  ],
+};
+
+module.exports = config;
+```
+## 💻 Step 5: Usage in MDX
+Now you can use the component in any .mdx file.
+
+```jsx
+
+import LiveCode from '@site/src/components/LiveCode';
+
+<LiveCode code={`
+const topKFrequent = (nums, k) => {
+ // Your code goes here
+};
+
+render(
+  <div style={{ color: 'darkgreen' }}>
+    Result: {JSON.stringify(topKFrequent([1,1,1,2,2,3], 2))}
+  </div>
+);
+`} />
+```
+## 📋 Step 6: Troubleshooting & Maintenance
+If you add new libraries and the editor breaks, use this Nuclear Reset in PowerShell:
+
+PowerShell
+
+1. Clear caches:
+
+```jsx 
+Remove-Item -Recurse -Force .docusaurus, build, .cache -ErrorAction SilentlyContinue
+```
+
+2. Reset Node Modules:
+
+```jsx 
+Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue
+```
+
+3. Reinstall and Start
+```jsx 
+npm install
+npm start
+```
+
+4. Sometimes when an error occurs while adding/updating the components, press `Ctrl+C` and then run `npm start`.

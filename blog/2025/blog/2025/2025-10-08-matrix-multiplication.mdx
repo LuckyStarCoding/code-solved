@@ -1,0 +1,84 @@
+---
+slug: blog/2025/matrix-multiplication
+title: Matrix Multiplication
+authors: [luckystar]
+tags: [jstask, 2025, Matrix, Loops]
+date: 2025-10-08
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+The main condition of matrix multiplication is that the number of columns of the 1st matrix must equal to the number of rows of the 2nd one.
+As a result of multiplication you will get a new matrix that has the same quantity of rows as the 1st one has and the same quantity of columns as the 2nd one.
+For example if you multiply a matrix of "n" * "k" by "k" * "m" size you"ll get a new one of "n" * "m" dimensions.
+Create a function that takes 2 x 2D array (matrix A, matrixB) as an argument and returns a 2D array (matrix C). C = A*B.
+
+If the number of columns of the 1st matrix isn't equal to the number of rows of the 2nd: return "ERROR".
+Or the number of rows of the 1st matrix isn't equal to the number of columns of the 2nd: return "ERROR".
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+mul([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+  ], [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+  ]) ➞ [
+    [30, 36, 42],
+    [66, 81, 96],
+    [102, 126, 150]
+  ]
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Here's a great resource to read about matrices: [Matrix Multiplication - Math is Fun](https://www.mathsisfun.com/algebra/matrix-multiplying.html)
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function mul(A1, A2) {
+  let f = [];
+  const rows1 = A1.length;
+  const cols1 = A1[0].length;
+  const rows2 = A2.length;
+  const cols2 = A2[0].length;
+  if (cols1 !== rows2) {
+    return "ERROR";
+  }
+  for (let i = 0; i < rows1; i++) {
+    f.push([]);
+    for (let j = 0; j < cols2; j++) {
+      let sum = 0;
+      for (let k = 0; k < cols1; k++) {
+        sum += A1[i][k] * A2[k][j];
+      }
+      f[i].push(sum);
+    }
+  }
+
+  return f;
+}
+
+mul(
+  [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+  ],
+  [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+  ]
+);
+
+```
+</TabItem>
+
+</Tabs>
+

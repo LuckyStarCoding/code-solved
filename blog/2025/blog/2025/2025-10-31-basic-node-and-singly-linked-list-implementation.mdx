@@ -1,0 +1,197 @@
+---
+slug: blog/2025/basic-node-and-singly-linked-list-implementation
+title: Basic Node and Singly Linked List Implementation
+authors: [luckystar]
+tags: [jstask, 2025, Linked List]
+date: 2025-10-31
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Foundational Singly Linked List Components
+---
+
+<Tabs>
+<TabItem value="task1" label="Task 1: Implement components" >
+Our first task is to implement the foundational components of a singly linked list.
+1. Implement a `Node` class/structure
+It must contain a **data field** (to hold an integer value for simplicity) and a **pointer/reference to the next node**.
+
+2. Implement a `SinglyLinkedList` class/structure
+It must have a field (a **head pointer/reference**) that points to the first node in the list.
+
+3. Implement an `isEmpty()` method
+Checks if the list has any nodes (i.e., if the head is null).
+
+4. Implement an `insertAtHead(data)` method
+Adds a new node with the given `data` to the beginning of the list.
+
+```jsx 
+class Node {
+    constructor(data, next = null) {
+        this.data = data;
+        this.next = next;
+    }
+}
+
+class SinglyLinkedList {
+    constructor() {
+        this.head = null;
+    }
+
+    isEmpty() {
+        return this.head === null;
+    }
+
+    insertAtHead(data) {
+        let newNode = new Node(data);
+        newNode.next = this.head;
+        this.head = newNode;
+
+        if (this.tail === null) {
+        this.tail = node;
+    }
+    }
+}
+
+```
+</TabItem>
+
+<TabItem value="task2" label="Task 2: Insertion and Traversal" >
+Expand the list's functionality to include inserting at the end and a utility method to view the list's contents.
+
+1. Implement an `insertAtTail(data)` method: Adds a new node with the given data to the end of the list. You will need to traverse the list to find the last node.
+2. Implement a `printList()` method: Traverses the entire list and prints (or returns a string/array of) all the data values in order, which is essential for verification.
+```jsx
+
+class Node {
+    constructor(data, next = null) {
+        this.data = data;
+        this.next = next
+    }
+}
+
+class SinglyLinkedList {
+    constructor() {
+        this.head = null;
+        this.tail = null; // Important for O(1) tail insertion
+        // We'll assume the correct isEmpty() and insertAtHead() from Task 1 are also here.
+    }
+
+    isEmpty() {
+        return this.head === null;
+    }
+
+    insertAtHead(data) {
+        let newNode = new Node(data);
+        newNode.next = this.head;
+        this.head = newNode;
+
+        if (this.tail === null) {
+        this.tail = node;
+        }
+    }
+
+    // --- Task 2 Goal 1: insertAtTail (O(1) operation) ---
+    insertAtTail(data) {
+        let newNode = new Node(data);
+
+        // Case 1: List is Empty
+        if (this.head === null) {
+            this.head = newNode;
+            this.tail = newNode;
+        } 
+        // Case 2: List is NOT Empty
+        else {
+            // 1. Link the current last node (this.tail) to the new node.
+            this.tail.next = newNode;
+            // 2. Update the tail pointer to the new node.
+            this.tail = newNode;
+        }
+    }
+
+    // --- Task 2 Goal 2: printList (O(N) operation) ---
+    printList() {
+        let current = this.head;
+        const result = [];
+        
+        while (current !== null) {
+            result.push(current.data);
+            current = current.next; // Move to the next node
+        }
+        
+        console.log(result.join(' -> ')); // Prints the list
+        return result; // Returns an array for verification
+    }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="task3" label="Task 3: Deletion Operations (Singly Linked List)" >
+
+This task involved implementing the two primary deletion operations: `deleteAtHead()` and `deleteAtTail()`.
+1. deleteAtHead()
+
+Removes the first node of the list.
+
+| Characteristic | Detail |
+| :--- | :--- |
+| **Time Complexity** | **O(1)** (Constant Time) |
+| **Logic** | 1. Check for **empty list**. 2. Store the head's data. 3. If **single node**, set `head` and `tail` to `null`. 4. Otherwise, set `this.head = this.head.next`. 5. Return deleted data. |
+| **Key Action** | Manipulating the `head` pointer. |
+
+---
+
+2. deleteAtTail()
+
+Removes the last node of the list. Requires finding the predecessor node.
+
+| Characteristic | Detail |
+| :--- | :--- |
+| **Time Complexity** | **O(N)** (Linear Time) |
+| **Logic** | 1. Check for **empty** or **single node** list. 2. If multi-node, **traverse** from `head` until `curr.next` is equal to `this.tail`. 3. Store the tail's data. 4. Set the new tail's link to `null`: `curr.next = null`. 5. Update `this.tail = curr`. 6. Return deleted data. |
+| **Key Action** | Traversal to find the **second-to-last node** (`curr`), then updating `curr.next` and `this.tail`. |
+
+```jsx
+deleteAtTail() {
+    // 1. Handle Empty List (This part was correct)
+    if (this.head === null) {
+        return null;
+    }
+
+    // 2. Handle Single-Node List (This part was correct)
+    if (this.head === this.tail) {
+        const deletedData = this.head.data;
+        this.head = null;
+        this.tail = null;
+        return deletedData;
+    }
+
+    // 3. Multi-Node List Traversal (Need to find the second-to-last node)
+    let curr = this.head;
+    
+    // Stop the loop when the node AFTER 'curr' is the tail (i.e., curr.next.next is null)
+    // Or, simpler: stop when curr.next is the tail (which we know is 'this.tail')
+    while (curr.next !== this.tail) {
+        curr = curr.next; 
+    }
+    
+    // At this point, 'curr' is the second-to-last node (the new tail).
+    const deletedData = this.tail.data;
+
+    // Remove the link to the old tail
+    curr.next = null; 
+    
+    // Update the list's tail pointer
+    this.tail = curr; 
+
+    return deletedData; 
+}
+```
+</TabItem>
+
+</Tabs>
+

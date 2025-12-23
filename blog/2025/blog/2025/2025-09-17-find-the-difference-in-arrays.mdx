@@ -1,0 +1,41 @@
+---
+slug: blog/2025/find-the-difference-in-arrays
+title: Find the Difference in Arrays
+authors: [luckystar]
+tags: [jstask, 2025, arrays]
+date: 2025-09-17
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+According to the lodash documentation, `_.difference(array, [values])` creates an array of array values not included in the other given arrays using SameValueZero for equality comparisons. The order and references of result values are determined by the first array.
+If you wanted to use this function in the real world you would just import lodash and use it but this challenge requires you to write your own version using vanilla javascript. Hopefully this enables you to better understand how the function works .
+
+- array (Array): The array to inspect.
+- [values] (...Array): The any number of arrays containing the values to exclude.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+    * difference([2, 1], [2, 3]);  // => [1]
+    * difference(["banana", "orange", "apple"], ["orange", "apple"]);  // => ["banana"]
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx
+
+function difference(array, ...arrays) {
+    let s = Array.from(new Set(arrays.flat()))
+    let f = [];
+        for (let i = 0; i < array.length; i++) {
+            !s.includes(array[i]) ? f.push(array[i]) : f
+        }
+    return f
+}
+
+```
+</TabItem>
+</Tabs>
+

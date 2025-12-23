@@ -1,0 +1,46 @@
+---
+slug: blog/2025/sort-colors
+title: Sort Colors
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Bubble sort]
+date: 2025-11-20
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+We will use the integers 0, 1, and 2 to represent the color red, white, and blue, respectively.
+It is required to solve this problem without using the library's sort function.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples">
+* sort([2,0,2,1,1,0]) ➞ [0,0,1,1,2,2]
+* sort([2,0,1]) ➞ [0,1,2]
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Keep in mind that in a classic Bubble Sort, after the first pass of the inner loop, the largest element is guaranteed to be in its correct final position (at the end of the unsorted part). Therefore, the next passes don't need to check the already-sorted elements at the end.
+</TabItem>
+<TabItem value="solution" label="Solution" defaultValue>
+```jsx 
+function sort(arr) {
+    for (let i = 0; i < arr.length; i++) {
+           for (let j = 0; j < arr.length-1-i; j++) {
+               if (arr[j] > arr[j+1]) {
+                   [arr[j], arr[j+1]] = [arr[j+1], arr[j]]
+               }
+           }
+        }
+        return arr;
+    }
+
+sort([2,0,2,1,1,0])
+
+```
+</TabItem>
+
+</Tabs>
+

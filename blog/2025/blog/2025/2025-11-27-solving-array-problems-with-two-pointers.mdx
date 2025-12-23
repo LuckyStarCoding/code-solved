@@ -1,0 +1,55 @@
+---
+slug: blog/2025/solving-array-problems-with-two-pointers
+title: Solving Array Problems with Two Pointers
+authors: [luckystar]
+tags: [jstask, 2025, Two-Poiner]
+date: 2025-11-27T15:30:00Z
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# 🎣 Optimal Cases for the Two-Pointer Technique
+
+The **Two-Pointer approach** is an optimal technique when solving problems that involve searching for pairs, triplets, or subarrays in a **linear data structure** (like an array or string) where the input is **sorted or can be sorted**.
+
+It is used to significantly reduce the time complexity, typically from **O(N²)** (which would be required for a brute-force nested loop) down to **O(N)** or **O(N log N)** (if sorting is required first).
+
+---
+
+### 1. 🔍 Finding Pairs or Subsets in Sorted Arrays (O(N) Time)
+
+This is the classic use case, often called the **"Opposite Ends"** or **"Closing Pointers"** approach.
+
+* **Goal:** Find a pair of elements that satisfy a condition (e.g., sum to a target, have a certain difference).
+* **Setup:** One pointer starts at the **beginning (`left`)** and the other at the **end (`right`)**.
+* **Movement:** The pointers move towards the middle based on the comparison:
+    * If the result is too small, move `left` right (to increase the sum/value).
+    * If the result is too large, move `right` left (to decrease the sum/value).
+* **Example Problems:**
+    * **Two Sum II (Sorted Array):** Find two numbers that sum to a target.
+    * Finding a specific pair or triplet (e.g., 3Sum).
+
+---
+
+### 2. 🧱 Handling Boundaries (Trapping Rain Water) (O(N) Time)
+
+This is a specific application where the pointers define an active area and are used to find the true limiting boundary without a pre-computation step.
+
+* **Goal:** Calculate a value (like trapped water) that depends on the minimum of two dynamically changing boundaries (**Max Left** and **Max Right**). 
+* **Setup:** Pointers start at opposite ends.
+* **Movement:** Always move the pointer associated with the **smaller** of the two current maximum boundary values inward. This guarantees that the water level calculation at that position is finalized and correct.
+
+---
+
+### 3. 🔄 In-Place Reversal or Transformation (O(N) Time)
+
+This is used when you need to perform an operation (like swapping) on corresponding elements from opposite sides of a list or string, often for reversal or palindrome checks.
+
+* **Goal:** Modify a data structure **in-place** by relating elements from the front and back.
+* **Setup:** Pointers start at opposite ends.
+* **Movement:** Both pointers move inward **simultaneously** (after the operation): `left++` and `right--`.
+* **Example Problems:**
+    * **Reversing a string or array.**
+    * **Checking if a string is a palindrome** (e.g., `aba`).
+    * **Reversing only specific characters** (e.g., "Reverse Only Letters").

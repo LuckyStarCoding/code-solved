@@ -1,0 +1,40 @@
+---
+slug: blog/2025/recursion-integer-digits-count
+title: Integer Digits Count
+authors: [luckystar]
+tags: [jstask, 2025, recursion]
+date: 2025-09-19
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Create a function that recursively counts the integer's number of digits.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* count(318) ➞ 3
+* count(-92563) ➞ 5
+* count(4666) ➞ 4
+* count(-314890) ➞ 6
+* count(654321) ➞ 6
+* count(638476) ➞ 6
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    For this task I have incorrectly used the global variable. Now I understand that I can pass the counter as the function argument.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function count(n, c=1) {
+  if (n<0) {n=Math.abs(n)}
+  // turns negative into positive
+  if (n<10) {return c} 
+  else { return count(Math.floor(n/10), c+1)}
+  return c;
+}
+```
+</TabItem>
+</Tabs>

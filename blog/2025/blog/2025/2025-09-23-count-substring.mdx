@@ -1,0 +1,41 @@
+---
+slug: blog/2025/count-substring
+title: Count Substring
+authors: [luckystar]
+tags: [jstask, 2025, loops]
+date: 2025-09-23
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function count_substring that counts the number of substrings that begin with character "A" and ends with character "X".
+For example, given the input string "CAXAAYXZA", there are four substrings that begin with "A" and ends with "X", namely: "AX", "AXAAYX", "AAYX", and "AYX".
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* countSubstring("CAXAAYXZA") ➞  4
+* countSubstring("AAXOXXA") ➞ 6
+* countSubstring("AXAXAXAXAX") ➞ 15
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+1. You should aim to avoid using nested loops to complete the task.
+2. You can assume that the input string is composed of English upper case letters only.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function countSubstring(s) {
+let c = 0;
+  for (let i = 0; i < s.length; i++) {
+      s[i]==='A' ?  c+=s.slice(i, s.length).split('').filter(el=>el==='X').length : c
+    }
+    return c;
+}
+
+```
+</TabItem>
+</Tabs>
+

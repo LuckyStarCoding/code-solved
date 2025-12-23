@@ -1,0 +1,138 @@
+---
+slug: blog/2025/add-binary
+title: Add Binary
+authors: [luckystar]
+tags: [jstask, 2025, Binary]
+date: 2025-12-10
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given two binary strings a and b, return their sum as a binary string.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+#### **Example 1: Short Strings with Carry**
+
+* **Input: `a`** = `"11"`
+* **Input: `b`** = `"1"`
+* **Output** = `"100"`
+
+**Explanation:** 11 (3 in decimal) plus 1 (1 in decimal) equals 100 (4 in decimal).
+
+---
+
+#### **Example 2: Longer Strings**
+
+* **Input: `a`** = `"1010"`
+* **Input: `b`** = `"1011"`
+* **Output** = `"10101"`
+
+**Explanation:** 1010 (10 in decimal) plus 1011 (11 in decimal) equals 10101 (21 in decimal).
+</TabItem>
+<TabItem value="notes" label="Notes" >
+   ## 🧠 Guidance: Adding Binary Strings
+
+To approach adding two binary strings, the most effective way is to simulate **manual column-by-column addition** (just like you would with base-10 numbers), working from right to left.
+
+---
+
+### 🛠️ Algorithm Strategy
+
+#### 1. Pointer Initialization
+Start from the end of both strings using two pointers, `i` and `j`, representing the current digits being added.
+
+#### 2. Handle the "Carry"
+In binary addition, the carry is crucial:
+
+* 0 + 0 = 0
+* 1 + 0 = 1
+* 1 + 1 = 0 (carry 1)
+* 1 + 1 + 1 = 1 (carry 1)
+
+You need a variable (usually called `carry`) to keep track of the remainder from the previous column.
+
+#### 3. The Addition Loop
+Run a loop while there are still digits to process in string `a`, string `b`, or a remaining `carry`.
+
+* **Extract digits:** Convert the character at pointers `i` and `j` into integers. If a pointer goes out of bounds (one string is shorter than the other), treat that value as 0.
+* **Calculate Sum:** `current_sum = digit_a + digit_b + carry`.
+* **Update Carry:** `carry = floor(current_sum / 2)`.
+* **Determine Digit:** The digit to append to your result is `current_sum % 2`.
+
+#### 4. Build the Result
+Since you are adding from right to left, the digits are found in reverse order. You can store them in an array or a string and reverse it at the end.
+
+---
+
+### 🧪 Example Walkthrough: `a = "11"`, `b = "1"`
+
+1.  **Rightmost column:** 1 + 1 + 0 (carry) = 2.
+    * Result digit: 0.
+    * New carry: 1.
+2.  **Next column:** 1 (from a) + 0 (empty b) + 1 (carry) = 2.
+    * Result digit: 0.
+    * New carry: 1.
+3.  **Final carry:** The loop ends, but carry is still 1.
+    * Append 1.
+4.  **Reverse/Final Output:** `"100"`
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Adds two binary strings (a and b) and returns their sum as a binary string.
+ * The approach simulates manual column-by-column binary addition from right-to-left.
+ */
+let addBinary = function(a, b) {
+    // Array to store the result digits (built in reverse order: least significant first)
+    let res = [];
+    
+    // Variable to track the carry-over to the next column
+    let carry = 0;
+    
+    // Pointers initialized to the last index of each string
+    let i = a.length - 1;
+    let j = b.length - 1;
+
+    // Loop continues as long as there are digits left in either string 
+    // OR if there is a remaining carry from the last addition.
+    while (i >= 0 || j >= 0 || carry > 0) {
+        
+        // Extract digit from string 'a'. If index 'i' is out of bounds, treat the digit as 0.
+        // The unary plus operator (+) converts the string character '0' or '1' to the number 0 or 1.
+        let da = i >= 0 ? +a[i] : 0; 
+        
+        // Extract digit from string 'b'. If index 'j' is out of bounds, treat the digit as 0.
+        let db = j >= 0 ? +b[j] : 0; 
+        
+        // Calculate the total sum for the current column (digit a + digit b + previous carry)
+        let sum = da + db + carry;
+
+        // The current result digit is the remainder (0 or 1) when sum is divided by 2 (sum % 2).
+        res.push(sum % 2);
+
+        // The new carry is the quotient (how many 2s fit into the sum) 
+        // which is found using integer division (Math.floor(sum / 2)).
+        carry = Math.floor(sum / 2);
+        
+        // Move pointers to the next column (leftward)
+        i--;
+        j--;
+    }
+
+    // The result array 'res' contains digits from right-to-left.
+    // Reverse the array and join the elements to form the final binary string.
+    return res.reverse().join('');
+};
+
+// Example usage is provided for context, but not part of the function definition itself.
+// addBinary("1010", "1011")
+
+```
+</TabItem>
+
+</Tabs>
+

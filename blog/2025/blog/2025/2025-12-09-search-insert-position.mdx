@@ -1,0 +1,125 @@
+---
+slug: blog/2025/search-insert-position
+title: Search Insert Position
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Binary Search]
+date: 2025-12-09
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You must write an algorithm with `O(log n)` runtime complexity.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+### 🚀 Example Test Cases
+
+These examples illustrate the three main scenarios for the Search Insert Position problem: target found, target insertion in the middle, and target insertion at the end.
+
+---
+
+#### **Example 1: Target Found**
+
+| Key | Value |
+| :--- | :--- |
+| **Input: `nums`** | `[1, 3, 5, 6]` |
+| **Input: `target`** | `5` |
+| **Output** | `2` |
+
+**Explanation:** The target `5` is present in the array at index 2.
+
+---
+
+#### **Example 2: Target Insertion (Middle)**
+
+| Key | Value |
+| :--- | :--- |
+| **Input: `nums`** | `[1, 3, 5, 6]` |
+| **Input: `target`** | `2` |
+| **Output** | `1` |
+
+**Explanation:** The target `2` is not present. If inserted in order, it would be at index 1, shifting `3` to index 2.
+
+---
+
+#### **Example 3: Target Insertion (End)**
+
+| Key | Value |
+| :--- | :--- |
+| **Input: `nums`** | `[1, 3, 5, 6]` |
+| **Input: `target`** | `7` |
+| **Output** | `4` |
+
+**Explanation:** The target `7` is greater than all elements. It would be inserted at the end of the array, which is index 4.
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    ## 🛠️ Algorithm Strategy
+
+The goal is to adapt the standard **Binary Search** to handle the "insertion point" requirement.
+
+1.  **Initialize Pointers:** Set a **Left Pointer (L)** to the start of the array (0) and a **Right Pointer (R)** to the end of the array (length - 1).
+2.  **Loop Condition:** The search loop must run as long as **L is less than or equal to R**. This ensures the pointers check every possible range.
+3.  **Find Midpoint:** Calculate the middle index, **M = floor(L + (R - L) / 2)**.
+4.  **Comparison Logic:**
+    * If `nums[M] == target`, return M (Target found).
+    * If `nums[M] < target`, the target is larger, so search the right half: **L = M + 1**.
+    * If `nums[M] > target`, the target is smaller, so search the left half: **R = M - 1**.
+5.  **Return Insertion Point:** If the loop completes without finding the target, the loop terminates because **L is greater than R**. At this point, the **Left Pointer (L)** holds the correct index where the `target` should be inserted. This is the final result.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Given a sorted array of distinct integers and a target value, 
+ * return the index if the target is found. If not, 
+ * return the index where it would be inserted in order.
+ * * This algorithm uses Binary Search to achieve O(log n) runtime complexity.
+ */
+let searchInsert = function(nums, target) {
+    // Initialize the left pointer (start of the search range)
+    let l = 0;
+    // Initialize the right pointer (end of the search range)
+    let r = nums.length - 1;
+
+    // Continue the search as long as the left pointer is less than or equal to the right pointer.
+    // This loop structure handles both finding the element and determining the insertion point.
+    while (l <= r) {
+        // Calculate the middle index (M) of the current search range [l, r].
+        // Using (r - l) / 2 prevents potential integer overflow compared to (l + r) / 2.
+        let m = Math.floor(l + (r - l) / 2); 
+
+        // Case 1: Target Found
+        if (nums[m] === target) {
+            return m; // Return the index of the found target.
+        } 
+        
+        // Case 2: Target is in the Right Half (Target > nums[M])
+        else if (nums[m] < target) {
+            // Move the left pointer to the right of M to search the upper half.
+            l = m + 1;
+        } 
+        
+        // Case 3: Target is in the Left Half (Target < nums[M])
+        else { // nums[m] > target
+            // Move the right pointer to the left of M to search the lower half.
+            r = m - 1;
+        }
+    }
+
+    // Loop Termination: If the loop finishes, the target was not found.
+    // At this point, the left pointer (l) represents the insertion index: 
+    // it points to the first element greater than the target, or to nums.length if 
+    // the target is larger than all elements.
+    return l; 
+};
+
+```
+</TabItem>
+
+</Tabs>
+

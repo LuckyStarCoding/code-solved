@@ -1,0 +1,128 @@
+---
+slug: blog/2025/minimum-meeting-rooms-needed
+title: Minimum Meeting Rooms Needed
+authors: [luckystar]
+tags: [jstask, 2025, Intervals]
+date: 2025-10-21
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array of meeting time intervals, where each interval is represented as [start, end] which represents a meeting starting at time start and ending at time end, 
+determine the minimum number of meeting rooms required to accommodate all the meetings without any overlap.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* minMeetingRoomsNeeded([[83,99]]) ➞ 1
+* minMeetingRoomsNeeded([[1,5],[2,6],[8,9]]) ➞ 2
+* minMeetingRoomsNeeded([[5,10],[10,15],[15,20]]) ➞ 1
+
+</TabItem>
+<TabItem value="solution1" label="Solution" >
+```jsx 
+function minMeetingRoomsNeeded(iv) {
+    if (iv === null || iv.length === 0) {
+        return 0;
+    }
+
+    let st = [];
+    let end = [];
+
+    iv.forEach(el => {
+        st.push(el[0]);
+        end.push(el[1]);
+    });
+
+    st.sort((a, b) => a - b);
+    end.sort((a, b) => a - b);
+
+    let rooms = 0;
+    let maxRooms = 0;
+    let startPointer = 0;
+    let endPointer = 0;
+
+    while (startPointer < st.length) {
+        if (st[startPointer] < end[endPointer]) {
+            rooms++;
+            startPointer++;
+        } else {
+            rooms--;
+            endPointer++;
+        }
+        
+        maxRooms = Math.max(maxRooms, rooms);
+    }
+
+    return maxRooms;
+}
+
+```
+</TabItem>
+
+<TabItem value="solution2" label="Solution (with comments)" >
+    ```jsx
+    function minMeetingRoomsNeeded(iv) {
+    // 1. Handle edge case for zero meetings
+    if (iv === null || iv.length === 0) {
+        return 0;
+    }
+
+    // 2. Separate and sort the start and end times
+    let st = [];
+    let end = [];
+
+    // Populate start and end arrays
+    iv.forEach(el => {
+        st.push(el[0]);
+        end.push(el[1]);
+    });
+
+    // Sort both arrays numerically
+    st.sort((a, b) => a - b);
+    end.sort((a, b) => a - b);
+
+    // 3. Initialize pointers and counters
+    let rooms = 0;
+    let maxRooms = 0;
+    let startPointer = 0;
+    let endPointer = 0;
+
+    // 4. Sweep-Line Algorithm: Loop until all meetings have started
+    // We only need to check the start array, as rooms will be released afterwards.
+    while (startPointer < st.length) {
+        // Compare the next start time with the earliest end time
+        if (st[startPointer] < end[endPointer]) {
+            // A new meeting starts BEFORE a room is freed.
+            // Action: Reserve a new room.
+            rooms++;
+            startPointer++; // Move to the next start event.
+        } else {
+            // A meeting ends AT OR BEFORE the next one starts.
+            // Action: A room is freed and can be reused.
+            rooms--;
+            endPointer++; // Move to the next end event.
+            
+            // NOTE: We DO NOT advance the startPointer here. The logic assumes
+            // the start event will be processed in the next iteration 
+            // after the room is freed (or in the current one if we use a different structure).
+            // For this two-pointer structure, we let the startPointer wait 
+            // and process the start event in the next loop cycle, which ensures
+            // the room count is correct at the point of overlap.
+        }
+        
+        // Update the maximum room count seen so far
+        maxRooms = Math.max(maxRooms, rooms);
+    }
+
+    // 5. Return the maximum number of rooms needed concurrently
+    return maxRooms; 
+}
+    ```
+</TabItem>
+
+</Tabs>
+

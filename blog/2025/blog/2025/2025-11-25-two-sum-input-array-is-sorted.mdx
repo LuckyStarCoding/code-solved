@@ -1,0 +1,75 @@
+---
+slug: blog/2025/two-sum-input-array-is-sorted
+title: Two Sum - Input Array Is Sorted
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two-Pointer]
+date: 2025-11-25
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number. Let these two numbers be numbers[index1] and numbers[index2] where `1 <= index1 < index2 <= numbers.length`.
+
+Return the indices of the two numbers, index1 and index2, added by one as an integer array [index1, index2] of length 2.
+The tests are generated such that there is exactly one solution. You may not use the same element twice.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" >
+
+#### Example 1
+
+* **Input:** `numbers = [2, 7, 11, 15]`, `target = 9`
+* **Output:** `[1, 2]`
+* **Explanation:** The sum of `2` (at index 1) and `7` (at index 2) is 9. We return the **1-indexed** array `[1, 2]`.
+
+#### Example 2
+
+* **Input:** `numbers = [2, 3, 4]`, `target = 6`
+* **Output:** `[1, 3]`
+* **Explanation:** The sum of `2` (at index 1) and `4` (at index 3) is 6. We return the **1-indexed** array `[1, 3]`.
+
+#### Example 3
+
+* **Input:** `numbers = [-1, 0]`, `target = -1`
+* **Output:** `[1, 2]`
+* **Explanation:** The sum of `-1` (at index 1) and `0` (at index 2) is -1. We return the **1-indexed** array `[1, 2]`.
+</TabItem>
+<TabItem value="notes" label="Notes" >
+Since the array is **sorted**, the most efficient and space-compliant solution is the **Two-Pointer technique**.
+</TabItem>
+<TabItem value="solution" label="Solution" defaultValue>
+```jsx 
+let twoSum = function(nums, tg) {
+    let l = 0; // Pointer starts at the beginning (smallest element)
+    let r = nums.length - 1; // Pointer starts at the end (largest element)
+    
+    while (l < r) {
+        let currentSum = nums[l] + nums[r];
+
+        if (currentSum === tg) {
+            // Case 1: Found the Target
+            // Return 1-indexed indices as required.
+            return [l + 1, r + 1]; 
+        } else if (currentSum < tg) {
+            // Case 2: Sum is Too Small
+            // To increase the sum, we must include a larger number.
+            // Move the left pointer one step right.
+            l++; 
+        } else { // currentSum > tg
+            // Case 3: Sum is Too Large
+            // To decrease the sum, we must include a smaller number.
+            // Move the right pointer one step left.
+            r--;
+        }
+    }
+    // As the problem guarantees a solution, this line is only a failsafe.
+    return []; 
+};
+```
+</TabItem>
+
+</Tabs>
+

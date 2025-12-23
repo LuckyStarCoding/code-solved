@@ -1,0 +1,45 @@
+---
+slug: blog/2025/insertion-sort
+title: Insertion Sort
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-11-11
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function that performs an insertion sort. 
+The function should take in an array of integers and return an array with the integers sorted in ascending order. The input array is modified.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* insertionSort([9, 3, 6, 2, 1, 11]); ➞ [1, 2, 3, 6, 9, 11]
+* insertionSort([12, 16, 14, 1, 2, 3]); ➞ [1, 2, 3, 12, 14, 16]
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Insertion sort is a simple sorting algorithm which compares elements one at a time with preceding element(s), "inserting" them into the correct position, and progressively building up a sorted array.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function insertionSort(arr) {
+  let i = 1;
+  while (i<arr.length) {
+        for (let j = 0; j < i; j++) {
+            if(arr[i] < arr[j]) {
+                [arr[i], arr[j]]=[arr[j], arr[i]]
+              }
+            }
+          i++
+        }
+  return arr
+}
+```
+</TabItem>
+
+</Tabs>
+

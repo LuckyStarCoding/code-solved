@@ -1,0 +1,58 @@
+---
+slug: blog/2025/take-home-pay-per-week
+title: Take-home pay per week
+authors: [luckystar]
+tags: [jstask, 2025]
+date: 2025-09-12
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Weekly Salary
+
+<span style={{ fontSize: "1.25em" }}>
+Write a function that takes a list of hours and returns the total weekly salary.
+The input list hours is listed sequentially, ordered from Monday to Sunday.
+A worker earns $10 an hour for the first 8 hours.
+For every overtime hour, he earns $15.
+On weekends, the employer pays double the usual rate, regardless how many hours were worked previously that week. For instance, 10 hours worked on a weekday would pay 80+30 = $110, but on a weekend it would pay 160+60 = $220.
+
+</span>
+
+<!-- truncate -->
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* weeklySalary([8, 8, 8, 8, 8, 0, 0]) ➞ 40
+* weeklySalary([10, 10, 10, 0, 8, 0, 0]) ➞ 410
+* weeklySalary([0, 0, 0, 0, 0, 12, 0]) ➞ 280
+    
+</TabItem>
+
+  <TabItem value="notes" label="Notes" >
+    Every element in the array is greater than or equal to 0.
+    </TabItem>
+  <TabItem value="solution" label="Solution" >
+
+```jsx
+function weeklySalary(h) {
+  let c = [];
+  let sn = (t) => t * 10;
+  let so = (t) => (t - 8) * 15 + 80;
+  let wn = (t) => t * 10 * 2;
+  let wo = (t) => (t - 8) * 15 * 2 + 160;
+  for (let i = 0; i < h.length; i++) {
+    if (i <= 4) {
+      h[i] <= 8 ? c.push(sn(h[i])) : c.push(so(h[i]));
+    } else if (i > 4) {
+      h[i] <= 8 ? c.push(wn(h[i])) : c.push(wo(h[i]));
+    }
+  }
+  return c.reduce((a, b) => a + b);
+}
+```
+    </TabItem>
+</Tabs>
+
+
+

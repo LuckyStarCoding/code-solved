@@ -1,0 +1,75 @@
+---
+slug: blog/2025/seasons-on-Earth
+title: Seasons on Earth
+authors: [luckystar]
+tags: [jstask, 2025, data structures]
+date: 2025-09-24
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+In this challenge, you are given a date and you have to determine the correspondent season in a certain hemisphere of Earth.
+You have to use the ranges given by the meteorological seasons definition, accordingly to the following table:
+
+| Start | End | North Hemisphere | South Hemisphere |
+|---|---|---|---|
+| March, 1 | May, 31 | Spring | Autumn |
+| June, 1 | August, 31 | Summer | Winter |
+| September, 1 | November, 30 | Autumn | Spring |
+| December, 1 | February, 28 | Winter | Summer |
+
+Given two strings hemisphere (can be "N" for the North hemisphere or "S" for the South hemisphere) and date (name and day of the month), implement a function that returns a string with the season name, accordingly to the above table.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* hemisphereSeason("N", "June, 30") ➞ "Summer"
+* hemisphereSeason("N", "March, 1") ➞ "Spring"
+* hemisphereSeason("S", "September, 22") ➞ "Spring"
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    During leap years the end date of Winter in the northern hemisphere is the 29th day of February (last day of Summer in the southern hemisphere). 
+    In this challenge, years are not used, so the last day of February will always be the 28th.
+
+    
+  📒  I spent some time working on this challenge, all because of an incorrectly selected data structure. Once I understood my mistake, I realized just how powerful the right data structure can be.
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function hemisphereSeason(hemisphere, date) {
+    const s = [{
+    "months": ["March", "April", "May"],
+    "north_hemisphere": "Spring",
+    "south_hemisphere": "Autumn"
+  },
+  {
+    "months": ["June", "July", "August"],
+    "north_hemisphere": "Summer",
+    "south_hemisphere": "Winter"
+  },
+  {
+    "months": ["September", "October", "November"],
+    "north_hemisphere": "Autumn",
+    "south_hemisphere": "Spring"
+  },
+  {
+    "months": ["January", "February", "December"],
+    "north_hemisphere": "Winter",
+    "south_hemisphere": "Summer"
+  }
+]
+
+let i = s.indexOf(s.find(el=>el.months.includes(date.split(', ')[0])));
+return hemisphere === 'N' ? s[i].north_hemisphere : s[i].south_hemisphere
+}
+
+```
+</TabItem>
+
+</Tabs>
+

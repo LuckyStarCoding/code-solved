@@ -1,0 +1,90 @@
+---
+slug: blog/2025/bubble-sort
+title: Bubble Sort
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-11-18
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function that performs a bubble sort. The function should take in an array of integers and return an array with the integers sorted in ascending order. 
+The input array is modified.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* bubbleSort([9, 3, 6, 2, 1, 11]); // [1, 2, 3, 6, 9, 11]
+* bubbleSort([12, 16, 14, 1, 2, 3]); // [1, 2, 3, 12, 14, 16]
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function bubbleSort(arr) {
+    // Outer loop controls the number of passes. 
+    // We need at most (arr.length - 1) passes to guarantee a sort.
+    for (let i = 0; i < arr.length - 1; i++) {
+        
+        // Inner loop performs the comparisons and swaps in the unsorted portion.
+        // The comparison limit is (arr.length - 1 - i).
+        // The '-i' part is the crucial optimization: 
+        // It ensures we skip the last 'i' elements because they are already sorted and in place.
+        for (let j = 0; j < arr.length - 1 - i; j++) {
+            
+            // Core comparison: Check if the current element is greater than the next element.
+            if (arr[j] > arr[j + 1]) {
+                // Swap: If the elements are out of order, swap them.
+                // This is the "bubbling up" action.
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+       
+    }
+  
+    return arr;
+}
+
+// Example usage
+bubbleSort([9, 3, 6, 2, 1, 11])
+
+```
+</TabItem>
+
+<TabItem value="solution2" label="Solution (Optimized)" >
+    ```jsx
+    function bubbleSort(arr) {
+    let n = arr.length;
+    let swapped; // Flag to track if any swaps occurred in a pass
+
+    // Outer loop: Controls the number of passes needed (up to n-1)
+    for (let i = 0; i < n - 1; i++) {
+        swapped = false; // Reset the flag for the current pass
+
+        // Inner loop: Compares adjacent elements and performs swaps
+        // We only check up to (n - 1 - i) because the last 'i' elements are already in place
+        for (let j = 0; j < n - 1 - i; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Perform the swap
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                swapped = true; // Record that a swap happened
+            }
+        }
+        
+        // Optimization: If no elements were swapped in an entire pass, 
+        // the array is sorted, and we can stop early (Best Case O(n)).
+        if (swapped === false) {
+            break;
+        }
+    }
+    return arr;
+}
+    
+    ```
+</TabItem>
+
+</Tabs>
+

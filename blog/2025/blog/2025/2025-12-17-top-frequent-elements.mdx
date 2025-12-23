@@ -1,0 +1,99 @@
+---
+slug: blog/2025/top-frequent-elements
+title: Top Frequent Elements
+authors: [luckystar]
+tags: [jstask, 2025, Map]
+date: 2025-12-17
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from '@site/src/components/LiveCode';
+
+Given an integer array `nums` and an integer `k`, return the `k` most frequent elements within the array.
+
+* The test cases are generated such that the answer is always **unique**.
+* You may return the output in **any order**.
+
+<!-- truncate -->
+
+<Tabs>
+<TabItem value="examples" label="Examples" >
+
+1. `nums = [1,2,2,3,3,3], k = 2`  
+    Output: `[3, 2]`  3 appears thrice, 2 appears twice. These are the top 2. 
+
+2. `nums = [7,7], k = 1` 
+    Output: `[7]` 7 is the only element, so it is the most frequent. 
+
+3. `nums = [1,1,1,2,2,3], k = 2`
+    Output: `[1, 2]` 1 appears 3 times, 2 appears 2 times.
+
+</TabItem>
+
+<TabItem value="notes" label="Notes" >
+  ### 💡 Efficiency Hints
+
+> **1. Use a Frequency Map:** Instead of nested loops, use a `Map` to count occurrences in a single pass O(n).
+>
+> **2. The Default Value Trick:** Use `(m.get(num) || 0) + 1` to handle new keys and existing keys in one line.
+>
+> **3. Sorting Entries:** Convert the map to an array using `Array.from(m.entries())` so you can sort based on the frequency (the value) rather than the element (the key).
+>
+> **4. Time Complexity:** This approach runs in O(N log N) time due to the sorting step.
+</TabItem>
+
+<TabItem value='try' label='Try' >
+
+<LiveCode code={`
+const topKFrequent = (nums, k) => {
+// your code goes here 
+};
+
+const result = topKFrequent([1, 1, 1, 2, 2, 3], 2);
+
+render(
+  <div style={{ padding: '10px', color: 'blue' }}>
+    Result: {JSON.stringify(result)}
+  </div>
+);
+`} />
+
+</TabItem>
+
+
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+let topKFrequent = function(nums, k) {
+    // Step 1: Initialize a Map to store frequencies
+    let m = new Map();
+
+    // Step 2: Fill the map. 
+    // (m.get(num) || 0) ensures we start at 0 if the number is seen for the first time.
+    for (let num of nums) {
+        m.set(num, (m.get(num) || 0) + 1);
+    }
+
+    // Step 3: Convert map entries to an array and process
+    return Array.from(m.entries())
+        // Sort descending: compare the counts (index 1 of the entry array)
+        .sort((a, b) => b[1] - a[1])
+        // Slice the first k elements (the top frequent ones)
+        .slice(0, k)
+        // Map back to get only the key (the actual number at index 0)
+        .map(el => el[0]);
+};
+
+// Test the function
+console.log(topKFrequent([1, 2, 2, 3, 3, 3], 2)); // Output: [3, 2]
+```
+</TabItem>
+
+</Tabs>
+

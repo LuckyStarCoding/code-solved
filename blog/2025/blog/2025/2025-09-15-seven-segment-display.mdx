@@ -1,0 +1,71 @@
+---
+slug: blog/2025/seven-segment-display
+title: Seven Segment Display
+authors: [luckystar]
+tags: [jstask, 2025]
+date: 2025-09-15
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+
+# Seven Segment Display
+
+Create a function that takes a single Hexadecimal number as an argument and returns the equivalent six-digit binary number to light the display. Consider the six-digit binary number as an incoming input from a serial port. The segment display is a common cathode segment display that means you need to give a logical 1 to light up each segment.
+
+<!-- truncate -->
+
+![Display](/img/7-seg-displaying-h-l-s.gif)
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+        * toDisplay(0x1) ➞ 0x06 [dp, g, f, e, d, c, b, a] = [0, 0, 0, 0, 0, 1, 1, 0]
+        * toDisplay(0x8) ➞ 0x7F [dp, g, f, e, d, c, b, a] = [0, 1, 1, 1, 1, 1, 1, 1]
+        * toDisplay(0x0) ➞ 0x3F [dp, g, f, e, d, c, b, a] = [0, 0, 1, 1, 1, 1, 1, 1]
+  
+  </TabItem>
+  <TabItem value="notes" label="Notes">
+    Bit order is as follows MSB [dp, g, f, e, d, c, b, a] LSB.
+This is something that comes up in FPGA work a lot, where you have to make some kind of conversion between numerical values and bits controlling hardware. These conversions often have no simple algorithm and require hard coding.
+If you do hard code this challenge you can try to determine the correct values by yourself but in industry if you can just look up a reference, you do. In this case the code tests have all the required values.
+  </TabItem>
+  <TabItem value="solution" label="Solution">
+    ```js
+
+    function toDisplay(hexIn) {
+    let obj = {
+    '0': [0, 0, 1, 1, 1, 1, 1, 1],
+    '1': [0, 0, 0, 0, 0, 1, 1, 0],
+    '2': [0, 1, 0, 1, 1, 0, 1, 1],
+    '3': [0, 1, 0, 0, 1, 1, 1, 1],
+    '4': [0, 1, 1, 0, 0, 1, 1, 0],
+    '5': [0, 1, 1, 0, 1, 1, 0, 1],
+    '6': [0, 1, 1, 1, 1, 1, 0, 1],
+    '7': [0, 0, 0, 0, 0, 1, 1, 1],
+    '8': [0, 1, 1, 1, 1, 1, 1, 1],
+    '9': [0, 1, 1, 0, 1, 1, 1, 1],
+    'A': [0, 1, 1, 1, 0, 1, 1, 1],
+    'b': [0, 1, 1, 1, 1, 1, 0, 0],
+    'C': [0, 0, 1, 1, 1, 0, 0, 1],
+    'd': [0, 1, 0, 1, 1, 1, 1, 0],
+    'E': [0, 1, 1, 1, 1, 0, 0, 1],
+    'F': [0, 1, 1, 1, 0, 0, 0, 1]
+    };
+    const hexMap = {
+    '0000': '0', '0001': '1', '0010': '2', '0011': '3',
+    '0100': '4', '0101': '5', '0110': '6', '0111': '7',
+    '1000': '8', '1001': '9', '1010': 'A', '1011': 'B',
+    '1100': 'C', '1101': 'D', '1110': 'E', '1111': 'F'
+    };
+
+let u= Object.values(obj)[hexIn];
+let hexResult = `${hexMap[u.slice(0, 4).join('')]}${hexMap[u.slice(4, 8).join('')]}`    
+return parseInt(`0x${hexResult}`, 16);
+```
+}
+  </TabItem>
+</Tabs>
+

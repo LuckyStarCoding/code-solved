@@ -1,0 +1,119 @@
+---
+slug: blog/2025/selection-sort
+title: Selection Sort
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-11-10
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function that performs a selection sort. The function should take in an array of integers and return an array with the integers sorted in ascending order.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* selectionSort([9, 3, 6, 2, 1, 11]) ➞ [1, 2, 3, 6, 9, 11]
+* selectionSort([12, 16, 14, 1, 2, 3]) ➞ [1, 2, 3, 12, 14, 16]
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    The process relies on a **nested loop structure** and a variable to track the index of the minimum element found so far in the unsorted list.
+
+---
+
+### 1. Initialization: Assuming the Minimum
+
+In each pass (controlled by the **outer loop** at index i), the algorithm starts by making an assumption:
+
+* It assumes the element currently at the boundary of the unsorted part, arr
+[i], is the smallest element.
+* It sets a temporary tracking variable, `minIndex`, equal to the starting index of the unsorted part: `let minIndex = i`
+### 2. Finding the True Minimum: The Inner Loop
+
+The **inner loop** (controlled by index j) then scans every element after i (i.e., the entire unsorted subarray) to challenge this assumption:
+
+* The loop starts at the next position: let j = i + 1.
+* It compares the element at the scanning index j with the element at the currently recorded `minIndex`: 
+`if(arr[j] < arr[minIndex]){...}`
+* If a smaller element is found, the algorithm updates `minIndex` to j. The value itself is **not swapped yet**, only its location is recorded:
+`minIndex = j`
+
+This process continues until j reaches the end of the array, ensuring that `minIndex` holds the **exact index** of the smallest element in the entire remaining unsorted list.
+
+### 3. Placing the Minimum: The Swap
+
+After the inner loop finishes, the algorithm knows the location of the true minimum (`minIndex`). It then performs the **swap** to move this element to its correct position i.
+
+* It checks if the true minimum was already at position `i`:
+`if(minIdx !== i){}`
+* If they are different, it swaps the element at arr[i] with the element at arr[minIndex]. This places the smallest element found directly into the **next available spot** in the sorted subarray.
+
+#### Example of the Swap:
+
+If the array is `[20, 12, 10, 15, 2]` and i=0:
+
+* `minIndex` is initially 0 (value 20).
+* Inner loop finds the minimum value is 2 at index 4. minIndex is updated to 4.
+* The swap occurs: arr[0] (20) and arr[4] (2) are exchanged.
+* The array becomes: `[2, 12, 10, 15, 20]`
+* The first element (2) is now correctly **placed** in the sorted subarray.
+
+The outer loop then increments i to 1, and the process repeats to find the smallest element among the remaining arr[1...N-1].
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function selectionSort(arr) {
+    // The outer loop iterates through the entire array.
+    // 'i' marks the boundary between the sorted subarray (left) 
+    // and the unsorted subarray (right).
+    // The elements from 0 to i-1 are already sorted.
+    for (let i = 0; i < arr.length; i++) {
+        
+        // Initialize the index of the minimum element found so far
+        // in the current unsorted subarray.
+        // We assume the element at the current boundary 'i' is the minimum initially.
+        let minIdx = i;
+        
+        // The inner loop searches for the actual smallest element 
+        // in the remaining unsorted subarray (from i+1 to the end).
+        for (let j = i + 1; j < arr.length; j++) {
+            
+            // Compare the current element (arr[j]) with the assumed minimum (arr[minIdx]).
+            if (arr[j] < arr[minIdx]) {
+                // If a smaller element is found, update minIdx to its location.
+                minIdx = j;
+            }
+        }
+
+        // After the inner loop completes, minIdx holds the index of the true minimum 
+        // element in the unsorted subarray.
+
+        // Check if the true minimum element is not already in the correct position 'i'.
+        if (minIdx !== i) {
+            // If they are different, perform the swap.
+            // This moves the smallest element into the next available sorted position 'i'.
+            
+            // Standard swap using a temporary variable 't'
+            let t = arr[i];
+            arr[i] = arr[minIdx];
+            arr[minIdx] = t;
+
+            /* Alternatively, using ES6 destructuring for a cleaner swap:
+            [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]]; 
+            */
+        }
+    }
+    
+    // Return the sorted array.
+    return arr;
+}
+
+```
+</TabItem>
+
+</Tabs>
+

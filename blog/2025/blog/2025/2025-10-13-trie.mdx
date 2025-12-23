@@ -1,0 +1,186 @@
+---
+slug: blog/2025/trie
+title: Trie
+authors: [luckystar]
+tags: [jstask, 2025, Data structures, Trie]
+date: 2025-10-13
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+A trie (pronounced "try"), also known as a prefix tree, is a tree-like data structure designed to efficiently manage and query strings. It's particularly useful for tasks such as autocomplete and spell checking.
+
+Implement a Trie class with the following methods:
+* insert(word: string): void: Adds the given word to the Trie
+* search(word: string): boolean: Checks if the specified word exists in the trie and returns true if it does, otherwise false
+startsWith(prefix: string): boolean: Checks if there is any word in the Trie that starts with the given prefix and returns true if such a word exists, otherwise false
+Input
+The Trie instance will have its methods called with various parameters based on these:
+* methods: string[]: An array of Trie method names
+* params: string[]: An array of strings
+* methods[i] will be called with params[i].
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* Input: `methods = ["insert","insert","search","startsWith","insert","search","startsWith"], params = ["car","care","car","cap","card","cast","car"]`
+  Output: `[null,null,1,0,null,0,1]`
+  Explanation: The words 'car' and 'care' are inserted. 'search' for 'car' finds it, and 'startsWith' for 'cap' returns 0. 'card' is then inserted. 'search' for 'cast' does not find it. 'startsWith' finds 'car'
+
+* Input: `methods = ["insert","insert","search","startsWith","insert","search","startsWith"], params = ["dog","doge","dog","do","door","doge","doc"]`
+  Output: `[null,null,1,1,null,1,0]`
+  Explanation: Words 'dog' and 'doge' are inserted. 'search' finds 'dog' and 'startsWith' finds 'do'. After 'door' is inserted, 'search' finds 'doge'.'startsWith' do not finds 'doc'
+
+* Input: `methods = ["insert","insert","startsWith","insert","search","search","startsWith"], params = ["banana","band","ban","bandit","band","banana","ban"]`
+  Output: `[null,null,1,null,1,1,1]`
+  Explanation: 'banana' and 'band' are inserted. 'startsWith' finds 'ban'. After 'bandit' is nserted, both 'band' and 'banana' can be found. 'startsWith' finds 'ban'.`
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Specify additional information for the task (if any)
+</TabItem>
+<TabItem value="solution1" label="Solution" >
+```jsx 
+class TrieNode {
+  constructor() {
+    this.children = {};
+    this.endOfWord = false;
+  }
+}
+
+class Trie {
+  constructor(){
+    this.root = new TrieNode();
+  }
+
+  insert(word) {
+      let currentNode  = this.root;
+      for (const char of word) {
+        if(!currentNode.children[char]) {
+         currentNode.children[char] = new TrieNode()
+         currentNode=currentNode.children[char]
+        }
+      }
+      currentNode.isEndOfWord = true;
+  }
+
+ 
+ search(word) {
+   let currentNode  = this.root;
+    for (const char of word) {
+         if (!currentNode.children[char]) {
+                return false;
+              }
+        currentNode = currentNode.children[char];
+    }
+    return true;
+  }
+
+  startsWith(prefix) {
+    let currentNode  = this.root;
+    for (const char of prefix) {
+         if (!currentNode.children[char]) {
+                return false;
+              }
+        currentNode = currentNode.children[char];
+    }
+    return true;
+
+  }
+}
+const dictTrie = new Trie()
+
+```
+</TabItem>
+
+<TabItem value="solution2" label="Solution with Comments" >
+```jsx
+
+/**
+ * Represents a single node (or character) within the Trie structure.
+ */
+class TrieNode {
+  /**
+   * Initializes a new TrieNode.
+   */
+  constructor() {
+    // 1. Children Map: Stores links to the next possible characters in a sequence.
+    // The keys are the characters (e.g., 'a', 'b'), and the values are other TrieNode instances.
+    this.children = {};
+    
+    // 2. End-of-Word Flag: Indicates whether the path leading up to this node 
+    // constitutes a complete, valid word that was inserted into the Trie.
+    this.endOfWord = false;
+  }
+}
+
+/**
+ * The main Trie (Prefix Tree) class.
+ * Used for efficient storage and retrieval of a set of strings based on their prefixes.
+ */
+class Trie {
+  /**
+   * Initializes the Trie structure.
+   */
+  constructor(){
+    // The root node is the entry point, representing the empty string.
+    // All words inserted into the Trie start from this node.
+    this.root = new TrieNode();
+  }
+
+  /**
+   * Inserts a word into the Trie.
+   * This process involves traversing the Trie character by character.
+   * Time Complexity: O(L), where L is the length of the word.
+   * @param {string} word The word to insert.
+   */
+  insert(word) {
+      // Start the traversal at the root of the Trie.
+      let currentNode = this.root;
+      
+      // Iterate through each character of the input word.
+      for (const char of word) {
+        
+        // 1. Check for Path Existence: See if the current node has a child 
+        //    corresponding to the current character.
+        if(!currentNode.children[char]) {
+          // If the child node does NOT exist (it's a new path/prefix part):
+          
+          // 2. Create Node: Instantiate a new TrieNode for this character.
+          currentNode.children[char] = new TrieNode()
+          
+          // 3. Move Pointer: Move the current node pointer to the newly created child node.
+          currentNode=currentNode.children[char]
+          
+        } else {
+          // If the child node DOES exist (it's a shared prefix):
+          
+          // 4. Reuse Node: Simply move the pointer to the existing child node 
+          //    to continue the traversal down the shared path.
+          currentNode=currentNode.children[char]
+        }
+      }
+      
+      // 5. Mark End: Once the loop finishes, the currentNode points to the node 
+      //    corresponding to the last character of the word. Mark it as the end of a complete word.
+      currentNode.isEndOfWord = true;
+  }
+
+  
+  /**
+   * Searches for a complete word in the Trie.
+   * @param {string} word The word to search for.
+   * @returns {boolean} True if the word is found, false otherwise.
+   */
+  search(word) {
+    throw 'Not implemented!'; // To be implemented by following the traversal pattern.
+  }
+}
+```
+</TabItem>
+
+</Tabs>
+

@@ -1,0 +1,83 @@
+---
+slug: blog/2025/insertion-sort
+title: Insertion Sort
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Insertion Sort]
+date: 2025-10-27
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function that performs an insertion sort. The function should take in an array of integers and return an array with the integers sorted in ascending order. 
+The input array is modified.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* insertionSort([9, 3, 6, 2, 1, 11]); // [1, 2, 3, 6, 9, 11]
+* insertionSort([12, 16, 14, 1, 2, 3]); // [1, 2, 3, 12, 14, 16]
+
+</TabItem>
+<TabItem value="solution1" label="Solution" >
+```jsx
+function insertionSort(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    let key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j = j - 1;
+    }
+    arr[j + 1] = key;
+  }
+  return arr;
+}
+```
+insertionSort([9, 3, 6, 2, 1, 11]);
+</TabItem>
+<TabItem value="solution2" label="Solution (with Comments)" >
+```jsx 
+function insertionSort(arr) {
+    // The outer loop iterates through the unsorted portion of the array,
+    // starting from the second element (index 1).
+    // 'i' marks the boundary between the sorted section (arr[0...i-1]) and the unsorted section.
+    for (let i = 1; i < arr.length; i++) {
+        
+        // 1. Store the element to be inserted into the sorted sequence.
+        // This is necessary because the shifting process will overwrite arr[i]'s original location.
+        let key = arr[i];
+        
+        // 2. Initialize the index 'j' to the last element of the currently sorted section.
+        let j = i - 1;
+        
+        // 3. Inner Loop (The Shifting Mechanism):
+        // This loop continues as long as:
+        //    * We haven't reached the start of the array (j >= 0)
+        //    * The element being checked (arr[j]) is greater than the key
+        while (j >= 0 && arr[j] > key) {
+            
+            // Shift the larger element (arr[j]) one position to the right.
+            // This creates a "hole" at arr[j] for the key to potentially drop into later.
+            arr[j + 1] = arr[j];
+            
+            // Move left to check the next element in the sorted sequence.
+            j = j - 1;
+        }
+        
+        // 4. Insertion: Place the stored key into the correct spot.
+        // The while loop stops when arr[j] is the element immediately smaller 
+        // than the key, meaning the correct insertion point is at j + 1.
+        arr[j + 1] = key;
+    }
+    
+    // Return the array, which is now sorted in-place.
+    return arr;
+}
+```
+</TabItem>
+
+</Tabs>
+

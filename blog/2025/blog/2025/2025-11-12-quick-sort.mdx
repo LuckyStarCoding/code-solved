@@ -1,0 +1,102 @@
+---
+slug: blog/2025/quick-sort
+title: Quick Sort
+authors: [luckystar]
+tags: [jstask, 2025, Array]
+date: 2025-11-12
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Implement a function that performs a recursive, in-place quick sort. 
+The function should take in an array of integers. The output should be an array with the input sorted in ascending order.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* quickSort([9, 3, 6, 2, 1, 11]) ➞ [1, 2, 3, 6, 9, 11]
+* quickSort([12, 16, 14, 1, 2, 3]) ➞ [1, 2, 3, 12, 14, 16]
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+  The Quicksort algorithm is an excellent example of the **Divide and Conquer** paradigm. To implement it correctly, you must break the process into two distinct, interconnected functions: a helper function and a recursive function.
+
+## 1. The Helper Function (The Divider)
+This function is responsible for the crucial **Partitioning** step. Its job is to rearrange a specific segment of the array around a single chosen element (the pivot).
+
+### Role
+Defines the final, sorted index of a pivot element.
+
+### Action
+It iterates through the array segment and swaps elements so that:
+* Everything to the **left of the pivot** is less than or equal to the pivot.
+* Everything to the **right of the pivot** is greater than or equal to it.
+
+### Result
+The pivot is now in its permanent, correct sorted position. The function returns the index of this final pivot location. 
+
+## 2. The Recursive Function (The Conqueror)
+This is the main sorting function that calls the helper function and manages the recursive process.
+
+### Role
+Ensures the entire array eventually gets sorted by recursively applying the partitioning logic to smaller sub-problems.
+
+### Action
+1.  It first checks the **Base Case** (e.g., if the sub-array has less than two elements, it stops).
+2.  It calls the **Helper Function** to partition the current sub-array and gets the `pivotIndex`.
+3.  It then calls **itself** (recursively) on the two new, smaller sub-arrays:
+    * The left side (`low` to `pivotIndex - 1`)
+    * The right side (`pivotIndex + 1` to `high`)
+
+By combining these two roles, the array is systematically broken down, sorted around many pivots, and eventually becomes fully ordered.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function actSort(arr, low, high) {
+    let p = arr[high];
+    let i = low - 1
+    
+    // Scan from low up to (but not including) high
+    for (let j = low; j < high; j++) {
+        if(arr[j] < p){
+            i++;
+            // Swap to move smaller element to the left
+            [arr[i], arr[j]] = [arr[j], arr[i]] 
+        }
+    }
+    
+    // Place the pivot (at arr[high]) into its final sorted position (i+1)
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]]
+    
+    return i + 1; // Return the pivot's final index
+}
+
+
+// Function 2: The Recursive QuickSort
+function quickSort(arr, low = 0, high = arr.length - 1){
+    // Base Case: Stop if the sub-array has 1 or 0 elements
+    if(low < high){
+        // 1. DIVIDE: Partition the current segment
+        let pivotIndex = actSort(arr, low, high);
+        
+        // 2. CONQUER: Recursively sort the left and right sub-arrays
+        
+        // Sort Left: from low to just before the pivot
+        quickSort(arr, low, pivotIndex - 1); 
+        
+        // Sort Right: from just after the pivot to high
+        quickSort(arr, pivotIndex + 1, high);
+    }
+    return arr;
+}
+
+quickSort([9, 3, 6, 2, 1, 11])
+
+```
+</TabItem>
+
+</Tabs>
+

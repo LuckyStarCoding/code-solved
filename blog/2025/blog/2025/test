@@ -1,0 +1,157 @@
+// function isMeetingCalendarValid(iv) {
+//   if (iv.length < 2) {
+//     return true;
+//   }
+//   let s = iv.sort((a, b) => a[0] - b[0]);
+//   for (let i = 0; i < s.length - 1; i++) {
+//     if (s[i][1] > s[i + 1][0]) {
+//       return false;
+//     }
+//   }
+//   return true;
+// }
+
+// function replaceNextLargest(arr) {
+//   let f = [];
+//   let c = [...arr].sort((a, b) => a - b);
+//   let m = new Map();
+//   c.forEach((el, i) => m.set(el, c[i + 1] !== undefined ? c[i + 1] : -1));
+//   arr.forEach((el) => f.push(m.get(el)));
+//   return f;
+// }
+
+// function arrayProductExcludingCurrent(numbers) {
+//   let f = [];
+//   for (let i = 0; i < numbers.length; i++) {
+//     let c = [...numbers];
+//     c[i] = 1;
+//     f.push(c.reduce((a, b) => a * b));
+//   }
+//   return f;
+// }
+
+// //www.greatfrontend.com/questions/algo/array-maximum-sum-contiguous?practice=practice&tab=coding
+
+// https: function maxSumSubArray(nums) {
+//   let max = 0;
+//   for (let j = 0; j < nums.length; j++) {
+//     let temp = [...nums].slice(j, nums.lemgth);
+//     for (let i = 0; i <= temp.length; i++) {
+//       let t = [...temp].slice(0, i);
+//       let sum = t.reduce((a, b) => a + b, 0);
+//       sum > max ? (max = sum) : max;
+//     }
+//   }
+
+//   return max;
+// }
+
+// function mostCommonElements(nums, k) {
+//   let d = new Set(nums);
+//   let f = [];
+//   for (let i of d) {
+//     f.push([i, nums.filter((el) => el === i).length]);
+//   }
+//   return f
+//     .sort((a, b) => b[1] - a[1])
+//     .map((el) => el[0])
+//     .slice(0, k);
+// }
+
+// function insertionSort(arr) {
+//   for (let i = 1; i < arr.length; i++) {
+//     let key = arr[i];
+//     let j = i - 1;
+//     while (j >= 0 && arr[j] > key) {
+//       arr[j + 1] = arr[j];
+//       j = j - 1;
+//     }
+//     arr[j + 1] = key;
+//   }
+//   return arr;
+// }
+
+// insertionSort([9, 3, 6, 2, 1, 11]);
+
+
+
+// class Node {
+//   constructor(data, next=null){
+//       this.data = data;
+//       this.next = next
+//   }
+// }
+
+// class SignlyLinkedList {
+//   constructor(){
+//       this.head = null;
+//       this.size++
+//   }
+
+//   isEmpty(){
+//       return this.head!==null
+//   }
+
+//   insertAtHead(data){
+//       let node = new Node(data)
+//       if(this.head===null){
+//           this.head = node;
+//       } else {
+//           node.next = this.head;
+//           this.head = node;
+//       }
+     
+//   }
+// }
+
+
+function findPref(arr){
+    let firstStr = arr[0]
+    for (let i = 0; i < firstStr.length; i++) {
+        let charToMatch = firstStr[i]
+        for (let j = 1; j < arr.length; j++) {
+            let currStr = arr[j]
+            if (i === currStr.length || currStr[i] !== charToMatch) {
+                return firstStr.substring(0, i);
+            }
+        }
+    }
+    return firstStr;
+}
+
+
+
+function longestCommonPrefix(strs) {
+    if (!strs || strs.length === 0) return "";
+   let m = new Map();
+   let overallLCP = ""
+
+    for (let i of strs) {
+        let init = i[0]
+        if(!m.has(init)){
+            m.set(init, [])
+        }
+        m.get(init).push(i)
+    }
+
+   for (const group of m.values()) {
+        if (group.length === 1) {
+            // A group of one means the LCP is the string itself
+            const currentLCP = group[0];
+            if (currentLCP.length > overallLCP.length) {
+                overallLCP = currentLCP;
+            }
+        } else {
+            // Use the standard Vertical Scanning LCP logic on the group
+            const currentLCP = findPref(group);
+
+            if (currentLCP.length > overallLCP.length) {
+                overallLCP = currentLCP;
+            }
+        }
+    }
+
+    return overallLCP;
+}
+
+longestCommonPrefix(['acc', 'accumulate', 'car', 'cardiac', 'currency',"flower","flow","flight"])

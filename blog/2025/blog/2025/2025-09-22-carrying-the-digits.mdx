@@ -1,0 +1,57 @@
+---
+slug: blog/2025/carrying-the-digits
+title: Carrying the Digits
+authors: [luckystar]
+tags: [jstask, 2025, docusaurus]
+date: 2025-09-22
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Write a function that returns the number of times you must carry a digit when you sum together two integers.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* carryDigits(36, 135) ➞ 1
+  // You carry the 1 when you sum 6 and 5 together.
+* carryDigits(671, 329) ➞ 3
+* carryDigits(1111, 3333) ➞ 0
+* carryDigits(53214, 56905) ➞ 3
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Not sure if it was the optimal way of coding this task. Anyway, I wrote the function that works :smile:
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx
+function carryDigits(n1, n2) {
+  let c = 0;
+  let s1 = String(n1);
+  let s2 = String(n2);
+  let m = Math.max(s1.length, s2.length);
+  s1.length !== m ? (s1 = s1.padStart(m, "0")) : (s2 = s2.padStart(m, "0"));
+  let r = [];
+  let t = 0;
+  for (let i = 0; i < m; i++) {
+    r.push(Number(s1[i]) + Number(s2[i]));
+  }
+  r.reverse();
+  for (let i = 0; i < r.length; i++) {
+    r[i] = r[i] + t;
+    t = 0;
+    r[i] <= 9
+      ? c
+      : r[i] % 10 === 0
+      ? ((c += 1), (t = r[i] / 10))
+      : ((t = r[i] % 10), (c += 1));
+  }
+  return c;
+}
+```
+
+</TabItem>
+</Tabs>

@@ -1,0 +1,47 @@
+facebook:
+  label: Facebook
+  permalink: /facebook
+  description: Facebook tag description
+data structures:
+  label: "Data Structures"
+  permalink: /"data structures"
+  description: "Data structures are specialized ways of storing and organizing data so you can access and modify it efficiently. 
+  For example, let's learn how to use arrays for lightning-fast access, or linked lists for flexible storage. These challenges help us understand when to use the right tool for the job. 
+  By mastering them, we'll write cleaner, faster, and more scalable programs. Let's level up our code by mastering the art of data organization."
+docusaurus:
+  label: Docusaurus
+  permalink: /docusaurus
+  description: Docusaurus tag description
+how-to:
+  label: How to
+  permalink: /how-to
+  description: "This collection of how-to articles isn't a random list of features. Instead, they're born from my own journey and the specific challenges I faced while building with Docusaurus. Think of this as a shared notebook of tips and tricks, full of practical solutions to the real-world problems you might be encountering. Dive in and find the answers you're looking for."
+jstask:
+  label: JStask
+  permalink: /jstask
+  description: "jstask tag description"
+
+regex:
+  label: Regex
+  permalink: /regex
+  description: "Explore tasks on Regular Expressions (Regex) – the powerful tool for pattern matching and text manipulation. Learn to build, test, and apply regex in various programming contexts."
+
+arrays:
+  label: Arrays
+  permalink: /arrays
+  description: "Looking for ways to handle lists of data efficiently? Here you'll find tasks covering everything about arrays: from basic declaration to advanced algorithms for sorting, searching, and transforming ordered collections. Sharpen your skills with practical examples and common interview questions involving arrays."
+
+recursion:
+  label: Recursion
+  permalink: /recursion
+  description: "Recursion is a programming technique where a function calls itself. A recursive function solves a problem by breaking it down into smaller, identical subproblems until it reaches a base case, which is a condition that stops the recursion. This approach is often used to solve problems that can be naturally divided into smaller pieces, such as traversing tree data structures, sorting algorithms, and mathematical computations like the factorial or Fibonacci sequence. When a function calls itself, each new call is added to the call stack. The function unwinds from the stack as each subproblem is solved, returning its result to the previous call until the final solution is reached. Enjoy!"
+
+loops:
+  label: Loops
+  permalink: /loops
+  description: "Explore tasks on JavaScript loops—the essential tools for performing repetitive actions. Learn how to iterate over data, execute code blocks a specific number of times, and build powerful, data-driven applications. This tag covers for, for...of, for...in, while, and do...while loops, as well as control statements like break and continue."
+
+"2025":
+  label: "2025"
+  permalink: /2025
+  description: 2025 tag description

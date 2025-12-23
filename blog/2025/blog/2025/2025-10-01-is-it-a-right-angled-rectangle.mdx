@@ -1,0 +1,133 @@
+---
+slug: blog/2025/is-it-a-right-angled-rectangle
+title: Is it a Right-Angled Rectangle
+authors: [luckystar]
+tags: [jstask, 2025, Geometry]
+date: 2025-10-01
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Find out if a right-angled triangle can be made given some facts about the shape.
+Given varying information about a shape, create a function that returns true if the shape could be a right-angle triangle and false if not.
+You will be given an array of numbers and a string stating whether the numbers are angles or sides.
+The information may indicate more than one possible shape, but we just need to know if these details could be found in a right-angled triangle.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* isRightAngle([30, 60], "angle") ➞ true
+// A third angle could be 90
+
+* isRightAngle([20, 20, 20, 20], "angle") ➞ false
+// More than 3 sides
+
+* isRightAngle([4, 5, 3], "side") ➞ true
+// `3**2 + 4**2 = 5**2`
+
+* isRightAngle([4, 5], "side") ➞ true
+// Third side may be 3
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    Took me some time to solve. However it's a good task!
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+
+function isRightAngle(arr, desc) {
+ return arr.length===0 ? true : arr.length > 3 ? false : desc==="side" ? sides(arr) : angles(arr)
+}
+
+let angles = (arr)=>{
+  if(arr.length == 1) {return arr[0] <= 90}
+  if(arr.length === 2){
+    return arr.reduce((a,b)=>a+b, 0) >= 180 ? false : 180-(arr[0]+arr[1])===90
+}
+  if (arr.length === 3) {
+    return (arr.reduce((a, b) => a + b, 0)=== 180 && arr.includes(90))
+}
+}
+
+let sides = (arr)=>{
+let v = arr.sort((a,b)=>a-b)
+    return arr.length === 2 ? Math.pow(v[0], 2) + Math.pow(v[1], 2) === Math.pow(Math.hypot(v[0], v[1]), 2) :  Math.pow(v[0], 2)+Math.pow(v[1], 2) === Math.pow(v[2], 2)
+}
+```
+</TabItem>
+
+<TabItem value="solution-with-comments" label="Solution with Comments" >
+    ```jsx
+/**
+ * Main function to determine if a set of measurements (angles or side lengths) 
+ * defines a right-angled triangle.
+ * * @param {number[]} arr - An array containing 0 to 3 numeric values.
+ * @param {string} desc - Specifies the input type: "side" for lengths, otherwise assumes angles.
+ * @returns {boolean} - True if it's a right triangle, False otherwise.
+ */
+function isRightAngle(arr, desc) {
+	// Checks for boundary conditions and dispatches to the correct helper function.
+	// 1. If array is empty, it's considered True (a degenerate or trivial case).
+	// 2. If array has > 3 elements, it's False (invalid triangle definition).
+	// 3. Otherwise, call 'sides' if desc is "side", or 'angles' if desc is anything else.
+	return arr.length===0 ? true : arr.length > 3 ? false : desc==="side" ? sides(arr) : angles(arr)
+}
+
+/**
+ * Checks if the provided angles define a right-angled triangle.
+ * Handles 1, 2, or 3 angle inputs based on the geometric rule that a right angle 
+ * must be present, and the sum must be 180 degrees.
+ * * @param {number[]} arr - Array of angle measures.
+ * @returns {boolean}
+ */
+let angles = (arr)=>{
+// Case 1: One angle provided. Must be less than or equal to 90 degrees 
+// to be one of the two acute angles in a right triangle.
+if(arr.length == 1) {return arr[0] <= 90}
+
+// Case 2: Two angles provided.
+if(arr.length === 2){
+	// Calculate the sum of the two known angles.
+    // If sum is >= 180, it's an invalid triangle (false).
+	// Otherwise, calculate the third angle (180 - sum) and check if it is exactly 90.
+   return arr.reduce((a,b)=>a+b, 0) >= 180 ? false : 180-(arr[0]+arr[1])===90
+}
+
+// Case 3: Three angles provided.
+if (arr.length === 3) {
+	// A right triangle must have:
+	// 1. An angle sum of exactly 180 degrees (valid triangle).
+	// 2. At least one angle of 90 degrees.
+    return (arr.reduce((a, b) => a + b, 0)=== 180 && arr.includes(90))
+}
+}
+
+/**
+ * Checks if the provided side lengths satisfy the Pythagorean theorem 
+ * (a^2 + b^2 = c^2), where c is the hypotenuse.
+ * * @param {number[]} arr - Array of side lengths.
+ * @returns {boolean}
+ */
+let sides = (arr)=>{
+// Sort the array ascendingly to ensure v[0] and v[1] are the legs (a, b) 
+// and v[2] (if present) is the hypotenuse (c).
+let v = arr.sort((a,b)=>a-b)
+
+// Case 1: Two sides provided (arr.length === 2).
+// This is a tautological check: (a^2 + b^2) should equal (Math.hypot(a, b))^2.
+// Math.hypot(a, b) is the hypotenuse, and squaring it makes the expression mathematically true.
+// This confirms the values are consistent with the hypotenuse calculation.
+// Case 2: Three sides provided (arr.length === 3).
+// Checks the Pythagorean theorem: leg1^2 + leg2^2 === hypotenuse^2 (v[0]^2 + v[1]^2 === v[2]^2).
+    return arr.length === 2 ? Math.pow(v[0], 2) + Math.pow(v[1], 2) === Math.pow(Math.hypot(v[0], v[1]), 2) :  Math.pow(v[0], 2)+Math.pow(v[1], 2) === Math.pow(v[2], 2)
+}
+
+
+    ```
+</TabItem>
+
+</Tabs>
+

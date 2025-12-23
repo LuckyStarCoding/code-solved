@@ -1,0 +1,41 @@
+---
+slug: blog/2025/most-common-elements
+title: Most Common Elements
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-10-24
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array of integers numbers and a number k, find the k most frequent numbers in the array. Here, k represents the number of elements that should be returned, which are the ones that appear the most frequently. 
+The order of the result does not matter.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* mostCommonElements([4,4,4,6,6,5,5,5], 2) ➞ [4,5]
+* mostCommonElements([7,7,7,8,8,9,9,9], 3) ➞ [7,9,8]
+* mostCommonElements([10,10,10,10,10], 1) ➞ [10]
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function mostCommonElements(nums, k) {
+    let d = new Set(nums);
+    let f = [];    
+      for (let i of d) {
+          f.push([i, nums.filter(el=>el===i).length])
+      }
+        return f.sort((a,b)=>b[1]-a[1]).map(el=>el[0]).slice(0, k);
+    }
+
+```
+</TabItem>
+
+</Tabs>
+

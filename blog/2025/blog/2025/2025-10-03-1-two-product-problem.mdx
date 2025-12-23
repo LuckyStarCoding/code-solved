@@ -1,0 +1,73 @@
+---
+slug: blog/2025/two-product-problem
+title: Two Product Problem
+authors: [luckystar]
+tags: [jstask, 2025, Loops, Data Structures]
+date: 2025-10-03T10:00:00Z
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Create a function that takes an array arr and a number n and returns an array of two integers whose product is that of the number n.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* twoProduct([1, 2, 3, 4, 13, 5], 39) ➞ [3, 13]
+* twoProduct([11, 2, 7, 3, 5, 0], 55) ➞ [5, 11]
+* twoProduct([100, 12, 4, 1, 2], 15) ➞ undefined
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+* No duplicates.
+* Sort the numbers.
+* Try doing this with 0(n) time complexity.
+The array can have multiple solutions, so return the first match you find.
+</TabItem>
+<TabItem value="solution1" label="Solution 1 O(n^2)" >
+```jsx 
+function twoProduct(arr, n) {
+let [a, b] = [0, 0];
+    for (let i = 0; i < arr.length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                if(j!==i){
+                   if(arr[i]*arr[j] === n) { return [a, b] = [arr[i], arr[j]].sort((a,b)=>a-b) }
+                }
+            }
+        
+    }
+    return undefined
+}
+
+```
+</TabItem>
+
+<TabItem value="solution2" label="Solution 2 O(n)" >
+```jsx 
+
+function twoProduct(arr, n) {
+let [a, b] = [0, 0];
+
+    // Create a Set containing all unique elements from the array.
+    // This allows for O(1) average-time lookups (d.has(s)).
+    // This step takes O(n) time. Crucial.
+
+let d = new Set(arr)    
+    for (let i = 0; i < arr.length; i++) {
+        let s = n/arr[i]
+            if (d.has(s)){
+               return [a,b]=[arr[i], s].sort((a,b)=>a-b)
+            }
+        
+    }
+    return undefined
+}
+
+```
+</TabItem>
+
+</Tabs>
+

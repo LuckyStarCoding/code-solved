@@ -1,0 +1,125 @@
+---
+slug: blog/2025/Find-Element-in-Rotated-Array
+title: Find Element in Rotated Array
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Binary search]
+date: 2025-11-17
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a sorted and rotated array numbers containing unique elements and an integer target, return the index of target if it is in numbers, or -1 if it is not.
+Rotating an array [a[0], a[1], a[2], ..., a[n-1]] once results in [a[n-1], a[0], a[1], a[2], ..., a[n-2]]. Rotating it a second time results in [a[n-2], a[n-1], a[0], a[1], ..., a[n-3]].
+Develop an algorithm that runs in O(log n) time complexity.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+Input: numbers = [0,1,2,3,4], target = 2
+Output: 2 
+Explanation: The original array [0,1,2,3,4] was rotated 0 times and 2 is present at 2nd index in given array
+
+Input: numbers = [2,3,4,0,1], target = 0
+Output: 3
+Explanation: The original array [0,1,2,3,4] was rotated 3 times and became [2,3,4,0,1]. 0 is present at 3rd index in given array
+
+Input: numbers = [4], target = 2
+Output: -1
+Explanation: The original array [4] was rotated 0 times and became [4]. 2 is not present in the given array
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+
+The trick to this problem is that a rotated sorted array is always split into **two distinct sorted halves**. A standard Binary Search doesn't work, so we adapt it.
+
+---
+
+### 1. 🧠 The Core Decision: Identify the Sorted Half
+
+In each step, we must first determine which half of the array is perfectly ordered:
+
+* **Find the Middle:** Calculate the middle index (`mid`).
+* **Check for Target:** If the element at `mid` is the target, return the index.
+* **Identify the Sorted Half:** Compare the left pointer's value (`l`) to the middle value (`mid`).
+    * If `nums[l] < = nums[mid]`, the **Left Half** is sorted.
+    * Otherwise, the **Right Half** is sorted.
+
+---
+
+### 2. 🎯 Narrowing the Search Space
+
+Once the sorted half is identified, we use its bounds to decide where to search next and safely discard 50% of the elements:
+
+* **Case A: Target is in the Sorted Half**
+    * If the target falls exactly within the bounds of this sorted half (e.g., if Left is sorted, check if nums[l] < = t < nums[mid])
+    * **Action:** Discard the other half and continue searching in this guaranteed sorted range.
+
+* **Case B: Target is NOT in the Sorted Half**
+    * If the target is outside the bounds of the sorted half, it must be in the remaining, unsorted half (which contains the rotation point).
+    * **Action:** Discard the sorted half and continue searching in the remaining unsorted portion.
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function findInRotatedArray(nums, t) {
+    // Initialize left pointer (start of the search space)
+    let l = 0;
+    // Initialize right pointer (end of the search space)
+    let r = nums.length - 1;
+
+    // Continue the binary search process until the pointers cross
+    while (l <= r) {
+        // Calculate the middle index (safer way to prevent potential integer overflow)
+        let mid = Math.floor(l + (r - l) / 2)
+        
+        // 1. Check if the middle element is the target
+        if (nums[mid] === t) {
+            return mid;
+        }
+
+        // 2. Determine which half is sorted
+        
+        // Check if the left half (from l to mid) is sorted
+        if (nums[l] <= nums[mid]) {
+            // Left half is sorted: [nums[l], ..., nums[mid]]
+            
+            // Check if the target is within the bounds of this sorted left half
+            if (nums[l] <= t && t < nums[mid]) {
+                // Target is in the sorted left half, so eliminate the right half
+                r = mid - 1;
+            } else {
+                // Target is not in the sorted left half, so it must be in the right (potentially unsorted) half
+                l = mid + 1;
+            }
+        } 
+        
+        // If the left half is NOT sorted, the right half (from mid to r) MUST be sorted
+        else {
+            // Right half is sorted: [nums[mid], ..., nums[r]]
+            
+            // Check if the target is within the bounds of this sorted right half
+            if (nums[mid] < t && t <= nums[r]) {
+                // Target is in the sorted right half, so eliminate the left half
+                l = mid + 1;
+            } else {
+                // Target is not in the sorted right half, so it must be in the left (unsorted) half
+                r = mid - 1;
+            }
+        }
+    }
+    
+    // If the loop finishes and the target was not found
+    return -1;
+}
+
+// Example call for testing
+findInRotatedArray([2,3,4,0,1], 0)
+
+```
+</TabItem>
+
+</Tabs>
+

@@ -1,0 +1,118 @@
+---
+slug: blog/2025/creating-a-boilerplate-mdx-template-page
+title: Creating a Boilerplate MDX Template Page
+authors: [luckystar]
+tags: [2025, how-to]
+date: 2025-09-23
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Creating a Boilerplate MDX Template Page
+
+Every day, I'd sit down to work on my daily JavaScript task, and every day, the same scene would unfold.
+I'd open my code editor and stare at a blank page, knowing I had to rebuild the same basic structure all over again.
+It was a repetitive, boring chore that got in the way of what I actually wanted to do: solve the problem and write some cool code.
+
+I was tired of this routine. I knew there had to be a better way to get to the fun part faster.
+That's when it hit me: why not create a template to handle all the tedious setup? I decided to build a simple, reusable structure that would let me skip the boring part and jump straight into the challenge.
+Here's how I did it.
+
+You're absolutely encouraged to follow along! :smile:
+
+<!-- truncate -->
+
+To create a boilerplate MDX file for Docusaurus with front matter and other common parts, we'll need a script that automates the process.
+Docusaurus itself doesn't have a built-in command for generating files from a template.
+A simple Node.js or shell script is a common solution.
+
+## 1. Create the Boilerplate Template
+
+First, let's create a template file with the content that we'd want to include in every new MDX file. This template should include the standard Docusaurus front matter.
+Create a new file named `template.mdx` in a convenient location (e.g., in a `scripts` directory at the root of the project) and add the boilerplate content:
+
+```jsx
+---
+title: My New Document
+description: A brief description of the document.
+slug: /my-new-document
+id: my-new-document
+tags: [jstask, 2025]
+
+# My New Document
+
+This is the content of my new Docusaurus page.
+
+```
+
+Later, we can customize the front matter fields (title, description, slug, id, tags) and add any other standard content or components that we use regularly.
+
+## 2. Create the Node.js Script
+
+Next, let's create a simple Node.js script to read the template and create a new file with the user-provided name.
+Create a new file named `create-mdx.js` in the same scripts directory.
+
+```jsx
+const fs = require("fs");
+const path = require("path");
+
+// Get the desired file name from the command line arguments
+const fileName = process.argv[2];
+
+if (!fileName) {
+  console.error("Please provide a file name for the new MDX file.");
+  console.log("Usage: node create-mdx.js <file-name>");
+  process.exit(1);
+}
+
+// Define the paths
+const templatePath = path.join(__dirname, "template.mdx");
+const outputPath = path.join(process.cwd(), "blog", `${fileName}.mdx`);
+
+// Ensure the `docs` directory exists
+const outputDir = path.dirname(outputPath);
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+// Read the template content
+const templateContent = fs.readFileSync(templatePath, "utf8");
+
+// Write the content to the new file
+fs.writeFileSync(outputPath, templateContent, "utf8");
+
+console.log(`Successfully created a new MDX file at: ${outputPath}`);
+```
+
+### How the script works:
+
+- It checks for a file name provided as a command-line argument.
+- It defines the paths to the template and the new file (assuming your Docusaurus docs are in a docs folder).
+- It ensures the destination directory exists.
+- It reads the content of `template.mdx` and writes it to the new file.
+
+## 3. Add an NPM Script
+
+To make the process easy to use, let's add a script to the `package.json` file. This allows us to run the script with a simple command.
+Open the `package.json` file and add the following line under the "scripts" section:
+
+```jsx
+"scripts": {
+  "create-mdx": "node scripts/create-mdx.js",
+  "start": "docusaurus start",
+  "build": "docusaurus build",
+  // ... other scripts
+}
+
+```
+
+Now we can create a new MDX file with a single command from the terminal:
+
+```jsx
+npm run create-mdx my-new-page
+```
+
+This command will create a new file named `blog/my-new-page.mdx` with our boilerplate content, ready for us to fill in.
+
+Done!

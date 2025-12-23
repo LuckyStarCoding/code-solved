@@ -1,0 +1,120 @@
+---
+slug: blog/2025/trapping-rain-water
+title: Trapping Rain Water
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two Poiner]
+date: 2025-12-16
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given **n** non-negative integers representing an elevation map where the width of each bar is 1, compute how much rainwater is being trapped after raining.
+Input: An array of integers heights.
+Output: The total volume of trapped water.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+## 📊 Detailed Example Walkthrough
+
+**Input:** `heights = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]`  
+**Output:** `6`
+
+### 🗺️ Visualizing the Elevation Map
+
+Each number represents the height of a pillar. Spaces where water is trapped are marked with `~`.
+
+```text
+Index:    0  1  2  3  4  5  6  7  8  9 10 11
+Heights:  0  1  0  2  1  0  1  3  2  1  2  1
+
+Level 3:                    █
+Level 2:           █  ~  ~  ~  █  ~  █
+Level 1:     █  ~  █  █  ~  █  █  █  █  █  █
+Level 0:  █  █  █  █  █  █  █  █  █  █  █  █
+          ----------------------------------
+Water:    0  0  1  0  1  2  1  0  0  1  0  0
+```
+</TabItem>
+
+
+<TabItem value="notes" label="Notes" >
+### 💧 Solution Strategy: Trapping Rain Water
+
+To solve this efficiently in O(n) time, use the **Two Pointers** approach:
+
+* **Initialize Pointers:** Set two pointers, **L** at the start (0) and **R** at the end (heights.length - 1).
+* **Move Strategically:** Instead of moving both at once, compare the heights at each pointer. Always move the pointer that points to the **shorter boundary**.
+* **Track Boundaries:** Maintain the maximum height seen so far on both the left side (**maxL**) and the right side (**maxR**).
+* **Calculate Water:** The water trapped at the current position is determined by the "bottleneck" (the shorter of the two maximum walls) minus the height of the current pillar.
+
+**The Core Logic:**
+> Water at index i = min(maxL, maxR) - heights[i]
+
+By always moving the shorter pointer, we ensure that we always know which side is the limiting factor (the minimum), allowing us to calculate the trapped water in a single pass.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Calculates the total trapped rain water using the Two-Pointers technique.
+ * Time Complexity: O(n) - Single pass through the array.
+ * Space Complexity: O(1) - Constant extra space used.
+ * * @param {number[]} arr - Array of elevation heights.
+ * @returns {number} - Total units of trapped water.
+ */
+let trapping = function(arr) {
+    let l = 0;                  // Left pointer starting at the beginning
+    let r = arr.length - 1;     // Right pointer starting at the end
+    let lMax = 0;               // Tallest wall found so far on the left
+    let rMax = 0;               // Tallest wall found so far on the right
+    let a = 0;                  // Accumulator for total trapped water
+
+    // Squeeze the "valley" from both sides until pointers meet
+    while (l < r) {
+        
+        // BOOTLENECK DECISION: 
+        // We only move the pointer pointing to the shorter side.
+        // If the left side is shorter, the water level is limited by lMax.
+        if (arr[l] < arr[r]) {
+            
+            if (arr[l] >= lMax) {
+                // We found a new tallest wall on the left; no water can be 
+                // trapped here, but this wall will trap water for future indices.
+                lMax = arr[l];
+            } else {
+                // Since current height is less than lMax, and we know there is 
+                // a taller wall on the right (arr[r]), water is trapped!
+                a += lMax - arr[l];
+            }
+            l++; // Move inward from the left
+            
+        } else {
+            // If the right side is shorter or equal, the bottleneck is on the right.
+            // Water level here is limited by rMax.
+            
+            if (arr[r] >= rMax) {
+                // New tallest wall on the right; no water trapped here.
+                rMax = arr[r];
+            } else {
+                // Current height is less than rMax, and we know there is 
+                // a taller wall on the left (arr[l]), water is trapped!
+                a += rMax - arr[r];
+            }
+            r--; // Move inward from the right
+        }
+    }
+    
+    return a;
+};
+
+// Test Case: [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+// The peak at index 7 (height 3) will naturally be the meeting point.
+console.log("Total Water Trapped:", trapping([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]));
+
+```
+</TabItem>
+
+</Tabs>
+

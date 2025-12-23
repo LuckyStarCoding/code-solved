@@ -1,0 +1,91 @@
+---
+slug: blog/2025/matrix-rotation
+title: Matrix Rotation
+authors: [luckystar]
+tags: [jstask, 2025, Matrix]
+date: 2025-10-10
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an n x n two-dimensional array matrix, rotate the matrix 90 degrees clockwise in-place. 
+This means the input two-dimensional matrix should be modified directly without using any additional 2D matrices.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* matrixRotation([[1,4],[2,6]]) ➞ [[2,1],[6,4]]
+* matrixRotation([[1,2,3],[4,5,6],[7,8,9]]) ➞ [[7,4,1],[8,5,2],[9,6,3]]
+</TabItem>
+<TabItem value="notes" label="Notes" >
+   I haven't done the main part of the task as I used additional 2D matrix. 
+</TabItem>
+<TabItem value="solution1" label="Solution 1" >
+```jsx 
+function matrixRotation(m){
+let n = []    
+  for (let i = 0; i < m.length; i++) {
+      n.push([])
+      for (let j = m[0].length-1; j >= 0; j--) {
+         n[i].push(m[j][i])
+      }
+  }
+    return n;
+}
+
+matrixRotation([[1,2,3], [4,5,6], [7,8,9]])
+
+```
+</TabItem>
+
+
+<TabItem value="solution2" label="Solution 2 (Optimal)" >
+```jsx 
+function matrixRotationInPlace(m) {
+    // 1. Transpose the Matrix (Swap m[i][j] with m[j][i])
+
+    // Assuming a square matrix (m.length === m[0].length) for simplicity
+    const N = m.length; 
+
+    // Iterate over the upper triangle of the matrix (i < j)
+    for (let i = 0; i < N; i++) {
+        for (let j = i; j < N; j++) { // Start j from i to avoid double-swapping
+            // Standard swap operation
+            [m[i][j], m[j][i]] = [m[j][i], m[i][j]];
+        }
+    }
+    
+    // 2. Reverse Each Row
+
+    for (let i = 0; i < N; i++) {
+        // Reverse the elements of the current row m[i]
+        // This can be done using the array's built-in reverse method
+        m[i].reverse();
+
+        // Alternatively, use a two-pointer swap for an in-place array reversal:
+        /*
+        let left = 0;
+        let right = N - 1;
+        while (left < right) {
+            [m[i][left], m[i][right]] = [m[i][right], m[i][left]];
+            left++;
+            right--;
+        }
+        */
+    }
+
+    // The original matrix 'm' is now rotated 90 degrees clockwise
+    return m;
+}
+
+const matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+```
+</TabItem>
+
+
+
+</Tabs>
+

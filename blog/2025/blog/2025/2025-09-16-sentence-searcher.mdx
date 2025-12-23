@@ -1,0 +1,79 @@
+---
+slug: blog/2025/sentence-searcher
+title: Sentence Searcher
+authors: [luckystar]
+tags: [jstask, 2025, regex]
+date: 2025-09-16
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Create a function that returns the whole of the first sentence which contains a specific word. Include the full stop at the end of the sentence.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+const str = "I have a cat. I have a mat. Things are going swell."
+
+* sentenceSearcher(str, "have") ➞ "I have a cat."
+* sentenceSearcher(str, "MAT") ➞ "I have a mat."
+* sentenceSearcher(str, "things") ➞ "Things are going swell."
+* sentenceSearcher(str, "flat") ➞ ""
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+Sentences will always end with a period.
+Your function should not be case sensitive.
+Return an empty string if the word isn't found in the sentence.
+
+## The Trick 🪄
+
+To split the string into an array where each item ends with a period (.), you can use the split() method with a regular expression.
+The trick is to use a positive lookbehind assertion in your regex to include the period in the split result, but not as the delimiter itself.
+
+```jsx
+const str = "I have a cat. I have a mat. Things are going swell."`;
+
+// Regex: (?<=\.) is a positive lookbehind that matches a position
+// that is immediately preceded by a period.
+// \s*` then matches any whitespace characters (spaces, newlines) that follow the period.
+
+const sentences = str.split(/(?<=\.)\s*/)
+console.log(sentences)
+```
+Output:
+```jsx
+[ "I have a cat.", "I have a mat.", "Things are going swell." ]
+```
+
+## Explanation of the Regex `/(?<=\.)\s*/`:
+
+`(?<=\.)`: This is a **positive lookbehind assertion**.
+
+* `?<=`: Starts a positive lookbehind. It asserts that the current position in the string is immediately preceded by the pattern inside the lookbehind, but it does not include that preceding pattern in the actual match used for splitting.
+
+* `\.`: Matches a literal period. The . is a special character in regex (it means "any character"), so we need to escape it with a backslash \ to match a literal period.
+
+* `\s*`: This matches zero or more whitespace characters.
+
+This is important because after a sentence ends with a period, there's usually a space (or sometimes multiple spaces or even a newline character) before the next sentence begins. Including `\s*` ensures that these spaces are removed from the beginning of the next sentence, keeping the sentence itself clean.
+
+So, the regex `/(?<=\.)\s*/` finds all positions in the string where a period is followed by zero or more whitespace characters, and it performs the split at those positions, ensuring the period remains part of the preceding sentence.
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+const str = "I have a cat. I have a mat. Things are going swell."
+function sentenceSearcher(str, word) {
+  let arr = str.split(/(?<=\.)\s\*/);
+  let re = new RegExp(word, 'i')
+      for (let i = 0; i < arr.length; i++) {
+          if (re.test(arr[i])) {return arr[i]}
+      }
+  return ''
+}
+```
+</TabItem>
+</Tabs>

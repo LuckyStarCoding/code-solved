@@ -1,0 +1,144 @@
+---
+slug: blog/2025/valid-palindrome-with-one-deletion
+title: Valid Palindrome with One Deletion
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two Poiner]
+date: 2025-12-15
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a non-empty string s, you may delete **at most one character**. Determine if you can make the resulting string a palindrome.
+A palindrome is a sequence that reads the same backward as forward (e.g., "racecar", "madam").
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+| Input (`s`) | Expected Output | Explanation |
+| :--- | :---: | :--- |
+| `"aba"` | `true` | Already a perfect palindrome (0 deletions). |
+| `"abca"` | `true` | Delete `'b'` or `'c'`. The remaining string is `"aca"` or `"aba"`. |
+| `"abc"` | `false` | Deleting any one character results in a non-palindrome (`"bc"`, `"ac"`, `"ab"`). |
+| `"madam"` | `true` | Already a perfect palindrome (0 deletions). |
+| `"level"` | `true` | Already a perfect palindrome (0 deletions). |
+
+### 🎯 Deletion Choice Edge Cases (The Tricky Ones)
+
+These cases test whether the algorithm correctly checks **both** deletion possibilities when a mismatch occurs.
+
+| Input (`s`) | Expected Output | Logic Check |
+| :--- | :---: | :--- |
+| `"deede"` | `true` | Mismatch at the last two characters (`d` vs `e`). Delete the last `'e'` to get `"deed"`. |
+| `"eedee"` | `true` | Mismatch at the first two characters (`e` vs `e`). Delete the first `'e'` to get `"edee"`. |
+| `"raceacar"` | `true` | Mismatch is between $e$ and $a$. Deleting $e$ leaves `"racacar"`. |
+| `"cupuoc"` | `true` | Mismatch at `'u'` (L=1) and `'o'` (R=4). Deleting `'o'` leaves `"cupuc"`. |
+| `"axxcxa"` | `false` | Mismatch is $x$ vs $c$. Deleting $x$ leaves `"axcxa"` (Fail). Deleting $c$ leaves `"axxaa"` (Fail). |
+
+### 📏 Length Edge Cases
+
+| Input (`s`) | Expected Output | Notes |
+| :--- | :---: | :--- |
+| `"a"` | `true` | Single character is always a palindrome. |
+| `"ab"` | `true` | Delete `'a'` $\rightarrow$ `"b"`. |
+| `"aba"` | `true` | Already a palindrome. |
+| `""` | `true` | Empty string (if constraints allow) is a palindrome. |
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+    ## 💡 Solution Strategy: Concise Hints
+
+The solution must be O(N) time complexity, which dictates the use of the **Two Pointers** technique combined with a recursive check.
+
+1.  **Initialize Pointers:** Set two pointers, `l` (left) to 0 and `r` (right) to `s.length - 1`.
+
+2.  **Iterate and Match:** Use a `while (l < r)` loop. As long as `s[l] === s[r]`, move the pointers inward (`l++`, `r--`).
+
+3.  **Handle Mismatch (The Key Step):** If `s[l] !== s[r]`, a mismatch is found. Since you can only delete **one** character, you must immediately use your deletion budget here and **return the result of checking two possibilities**:
+
+    * **Possibility 1 (Delete Left):** Check if the remaining substring from index l+1 to r forms a perfect palindrome. 
+    * **Possibility 2 (Delete Right):** Check if the remaining substring from index l to r-1 forms a perfect palindrome. 
+
+4.  **Use a Helper Function:** Create a dedicated helper function (e.g., `isPalindrome(s, start, end)`) that accepts the string and the specific `start` and `end` indices to check. This avoids creating new substring copies and maintains O(N) efficiency.
+
+5.  **Final Return:** If the main `while` loop finishes without finding any mismatch, the original string was already a perfect palindrome. The function should return `true`.
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+/**
+ * Checks if a string can be made a palindrome by deleting at most one character.
+ * This is the main function using the Two Pointers approach.
+ * Time Complexity: O(N)
+ * Space Complexity: O(1)
+ * * @param {string} s The input string.
+ * @returns {boolean} True if the string is valid with one deletion, false otherwise.
+ */
+let validPalindrome = function(s) {
+    // Initialize two pointers: 'l' at the start and 'r' at the end.
+    let l = 0;
+    let r = s.length - 1;
+    
+    // The main loop iterates inward, checking for the first mismatch.
+    while (l < r) {
+        // Check if the characters at the current pointers do not match.
+        if (s[l] !== s[r]) {
+            // Mismatch found! This is the ONE time we can 'delete' a character.
+            // We must check two possibilities:
+
+            // Possibility 1: Delete the left character (s[l]). Check if the remaining substring (l+1 to r) is a palindrome.
+            // OR
+            // Possibility 2: Delete the right character (s[r]). Check if the remaining substring (l to r-1) is a palindrome.
+            
+            // If either of the resulting substrings is a perfect palindrome, the condition is met.
+            if (palindrome(s, l + 1, r) || palindrome(s, l, r - 1)) {
+                return true;
+            } else {
+                // If neither of the resulting substrings is a palindrome,
+                // it means at least two deletions are required.
+                return false;
+            }
+        }
+        
+        // If characters match, move both pointers inward to continue the check.
+        l++;
+        r--;
+    }
+    
+    // If the loop completes without finding any mismatch, the string is already a perfect palindrome.
+    // (Zero deletions required).
+    return true;
+};
+
+/**
+ * Helper function to strictly check if a specific substring segment (defined by start and end indices)
+ * is a perfect palindrome (zero deletions allowed).
+ * * @param {string} s The original string.
+ * @param {number} l The starting index (left pointer).
+ * @param {number} r The ending index (right pointer).
+ * @returns {boolean} True if the substring is a palindrome, false otherwise.
+ */
+let palindrome = function(s, l, r) {
+    // Use a while loop to check the segment defined by the passed l and r indices.
+    while (l < r) {
+        // If any characters in the segment mismatch, it is NOT a perfect palindrome.
+        if (s[l] !== s[r]) {
+            return false;
+        }
+        // Move pointers inward.
+        l++;
+        r--;
+    }
+    // If the loop completes, the entire segment is a perfect palindrome.
+    return true;
+};
+
+// Example usage: validPalindrome("cupuoc")
+
+```
+</TabItem>
+
+</Tabs>
+

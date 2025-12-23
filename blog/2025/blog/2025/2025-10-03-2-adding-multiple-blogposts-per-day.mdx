@@ -1,0 +1,91 @@
+---
+slug: blog/2025/adding-multiple-blogposts-per-day
+title: Adding Multiple Blogposts per Day
+description: Dealing with Docusaurus's date-based file system when you're on a writing streak.
+authors: [luckystar]
+tags: [docusaurus, fix, 2025]
+date: 2025-10-03T15:30:00Z
+---
+
+# 🚀 The Docusaurus Writer's Dilemma: Two Posts, One Day
+
+Ever been on a serious writing streak? I sure have! I ran into a peculiar little snag recently when I needed to publish **two separate blog posts on the same calendar day** in my Docusaurus site.
+
+Docusaurus is awesome, but it's *very* strict about using the date in your filename (`YYYY-MM-DD-...`) for post ordering. If two posts share the exact same date, the system gets confused about which one is "first."
+
+Here's exactly how I fixed it, with two methods you can use! 👇
+
+---
+
+## 📅 Method 1: The Filename Identifier (The Quick Fix)
+
+The simplest and most robust way to solve this is to add a small, **unique identifier** right after the date in your file name. This makes the filename unique while still keeping the primary date correct.
+
+### Step-by-Step Filename Structure
+
+By default, Docusaurus looks for: `YYYY-MM-DD-your-slug.md`.
+
+To make it unique, we just sneak a sequential number (or letter) in there:
+
+`{YYYY-MM-DD-X-your-slug.md}`
+
+Where **`X`** is a number (1, 2, 3...) or a letter (A, B, C...) that dictates the order on that day.
+
+| Filename | Publication Date | Order on Blog Roll |
+| :--- | :--- | :--- |
+| `2025-10-02-1-morning-coffee-thoughts.md` | October 2, 2025 | 1st Post |
+| `2025-10-02-2-afternoon-coding-tips.md` | October 2, 2025 | 2nd Post |
+| `2025-10-02-3-late-night-ramblings.md` | October 2, 2025 | 3rd Post |
+
+#### 📂 Example File Paths
+
+If your blog posts live in the `blog/` directory, your structure would look like this:
+
+```
+blog/
+├── 2025-10-02-1-morning-coffee-thoughts.md
+├── 2025-10-02-2-afternoon-coding-tips.md
+├── 2025-10-03-single-post-today.md
+└── ...
+```
+
+## 🕰️ Method 2: Precise Time Control (The Clean Fix)
+
+If you're like me and prefer to keep your filenames super clean, you can completely ignore the need for the sequential number in the file name and instead rely on the `date` field in your post's front matter.
+
+If Docusaurus finds a `date` field in the front matter, it uses that instead of inferring the date from the filename! This gives you **explicit chronological control**.
+
+### Step-by-Step Front Matter Structure
+
+You need to use a precise **ISO 8601** string format, which includes the time and timezone (e.g., `YYYY-MM-DDTHH:mm:ssZ`).
+
+#### ☀️ File 1 (My Morning Post)
+
+Let's publish this one at 10:00 AM UTC.
+
+```markdown
+---
+slug: morning-update
+title: My First Post of the Day
+date: 2025-10-02T10:00:00Z  <-- The secret is the T10:00:00Z time!
+---
+
+Rise and shine! Some thoughts on today's tech news...
+
+```
+
+#### 🌙 File 2 (My Later Post)
+This one goes out at 3:30 PM UTC.
+
+```
+---
+slug: afternoon-update
+title: My Second Post of the Day
+date: 2025-10-02T15:30:00Z  <-- A later time ensures it's ordered correctly!
+---
+```
+
+Alright, back from lunch with a new tutorial...
+The beautiful result? Both posts will show up on the blog roll under October 2nd, but the 10:00 AM post will appear before the 3:30 PM post.
+
+It's a small change, but it's a huge win for anyone trying to feed the content machine! Happy Docusaurus blogging! ✍️

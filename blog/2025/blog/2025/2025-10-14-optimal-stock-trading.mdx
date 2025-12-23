@@ -1,0 +1,45 @@
+---
+slug: blog/2025/optimal-stock-trading
+title: Optimal Stock Trading
+authors: [luckystar]
+tags: [jstask, 2025]
+date: 2025-10-14
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a list of prices, where each element prices[i] represents the price of a particular stock on day i, determine the maximum profit to be made by purchasing the stock and selling it on a future date. 
+If it is not possible to generate a profit, return 0.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* optimalStockTrading([1,2,3,4]) ➞ 3
+* optimalStockTrading([4,3,2,1]) ➞ 0
+* optimalStockTrading([6,8,1,2,30,19]) ➞ 29
+
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function optimalStockTrading(p) { 
+  let min = p[0]
+  let maxProf = 0
+  for (let i = 0; i < p.length; i++) {
+      let currPr = p[i];
+      let currProf = currPr - min;
+      maxProf = Math.max(maxProf, currProf)
+      min = Math.min(min, currPr);
+  }
+  return maxProf
+}
+
+```
+</TabItem>
+
+</Tabs>
+

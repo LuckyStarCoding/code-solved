@@ -1,0 +1,84 @@
+---
+slug: blog/2025/pair-sum
+title: Pair Sum
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Maps]
+date: 2025-10-27T15:30:00Z
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array of integers numbers, write a function that returns the indices of two integers within the numbers array that sum up to a target integer. 
+The smaller index should appear first.
+There will always be exactly one solution for the given input.
+The same element should not be used more than once.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* pairSum([0,7,1,9], 7) ➞ [0,1]
+* pairSum([4,9,2,1,7], 5) ➞ [0,3]
+* pairSum([4,4], 8) ➞ [0,1]
+
+</TabItem>
+<TabItem value="solution1" label="Solution" >
+   ```jsx
+pairSum(nums, target) {
+ let numMap = new Map();
+    for (let i = 0; i < nums.length; i++) {
+        let compl = target-nums[i];
+       if(numMap.has(compl)) {
+           let f = numMap.get(compl);
+           return [f, i]
+       }
+        numMap.set(nums[i], i)
+    }
+    return []
+}
+
+   ```
+</TabItem>
+<TabItem value="solution2" label="Solution (with comments)" >
+```jsx 
+function pairSum(nums, target) {
+    // Initialize a Map (Hash Map) to store elements we've seen so far.
+    // Key: The number itself.
+    // Value: The index of that number in the 'nums' array.
+    let numMap = new Map();
+    
+    // Iterate through the array exactly once (O(n) time complexity).
+    for (let i = 0; i < nums.length; i++) {
+        
+        // Calculate the required 'complement' needed to reach the target.
+        // If currentNum + complement = target, then complement = target - currentNum.
+        let compl = target - nums[i];
+        
+        // Check if the required complement is already in the map.
+        // Map lookup is, on average, O(1) time.
+        if (numMap.has(compl)) {
+            
+            // If found, retrieve the index of the complement.
+            // Since we iterate forward, the stored index (f) is guaranteed to be smaller than the current index (i).
+            let f = numMap.get(compl);
+            
+            // Solution found! Return the indices immediately.
+            return [f, i];
+        }
+        
+        // If the complement wasn't found, store the current number and its index.
+        // This makes the current number available as a complement for future iterations.
+        numMap.set(nums[i], i);
+    }
+    
+    // If the loop finishes without finding a pair, return an empty array (or handle error).
+    return [];
+}
+
+```
+</TabItem>
+
+</Tabs>
+

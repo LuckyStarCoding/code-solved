@@ -1,0 +1,42 @@
+---
+slug: blog/2025/array-product-excluding-current
+title: Array Product Excluding Current
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-10-22
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array of integers numbers, return a new array result where each element result[i] represents the product of all the elements in numbers except for numbers[i].
+Input numbers: number[]: An array of integers.
+The product of any prefix or suffix of the numbers array is ensured to fit within a 32-bit integer.
+Use of the division operator is prohibited.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* arrayProductExcludingCurrent([1,2,3]) ➞ [6,3,2]
+* arrayProductExcludingCurrent([2,0,3]) ➞ [0,6,0]
+* arrayProductExcludingCurrent([0,0,-1,1]) ➞ [0,0,0,0]
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function arrayProductExcludingCurrent(numbers) {
+  let f = [];
+  for (let i = 0; i < numbers.length; i++) {
+    let c = [...numbers];
+    c[i] = 1;
+    f.push(c.reduce((a, b) => a * b));
+  }
+  return f;
+}
+```
+</TabItem>
+
+</Tabs>
+

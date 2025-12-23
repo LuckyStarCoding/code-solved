@@ -1,0 +1,108 @@
+---
+slug: blog/2025/matrix-zeroing
+title: Matrix Zeroing
+authors: [luckystar]
+tags: [jstask, 2025, Matrix]
+date: 2025-10-09
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a matrix of size `m x n`, modify the matrix such that if an element is 0, its entire row and column are set to 0. The changes should be made in-place, i.e. directly to the original matrix.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* matrixZeroing([[1,2,0],[4,0,6],[7,8,9]]) ➞ [[0,0,0],[0,0,0],[7,0,0]]
+* matrixZeroing([[1,2,3],[4,5,6],[7,8,9]]) ➞ [[1,2,3],[4,5,6],[7,8,9]]
+* matrixZeroing([[1,2],[3,4],[5,0],[7,8]]) ➞ [[1,0],[3,0],[0,0],[7,0]]
+
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+* `1 <= m, n <= 100`
+* `-1000 <= matrix[row][col] <= 1000`
+* Challenge: Use only O(1) extra space
+</TabItem>
+<TabItem value="solution1" label="Solution 1" >
+```jsx 
+function matrixZeroing(m) {
+  let idx = {
+    rows: [],
+    cols: [],
+  };
+  for (let i = 0; i < m.length; i++) {
+    m[i].forEach((el, j) => {
+      if (el === 0) {
+        idx.rows.push(i);
+        idx.cols.push(j);
+      }
+    });
+  }
+  for (let k = 0; k < idx.rows.length; k++) {
+    m[idx.rows[k]] = new Array(m[0].length).fill(0);
+  }
+
+  for (let u = 0; u < idx.cols.length; u++) {
+    for (let l = 0; l < m.length; l++) {
+      m[l][idx.cols[u]] = 0;
+    }
+  }
+  return m;
+}
+```
+</TabItem>
+
+<TabItem value="solution2" label="Solution 2 (Optimal)" >
+```jsx 
+function matrixZeroing(m) {
+    // Use Sets to store only UNIQUE row and column indices
+    let zeroRows = new Set();
+    let zeroCols = new Set();
+    
+    // Get dimensions once
+    const R = m.length;
+    // Defensive check for empty matrix
+    const C = R > 0 ? m[0].length : 0; 
+
+    // 1. FIRST PASS: Identify all unique zero coordinates (i, j).
+    // for clarity and to easily use the Set.add() method.
+    for (let i = 0; i < R; i++) {
+        for (let j = 0; j < C; j++) {
+            if (m[i][j] === 0) {
+                zeroRows.add(i); // Automatically handles duplicates
+                zeroCols.add(j); // Automatically handles duplicates
+            }
+        }
+    }
+
+    // 2. SECOND PASS: Zero out the identified rows.
+    // Iterate directly over the unique indices stored in the Set.
+    const rowZeroArray = new Array(C).fill(0);
+    for (const rowIndex of zeroRows) {
+        // Use spread to create a new array instance for each row
+        m[rowIndex] = [...rowZeroArray]; 
+    }
+
+    // 3. THIRD PASS: Zero out the identified columns.
+    // Iterate directly over the unique indices stored in the Set.
+    for (const colIndex of zeroCols) {
+        for (let i = 0; i < R; i++) {
+            m[i][colIndex] = 0;
+        }
+    }
+    
+    return m;
+}
+
+const m = [ [ 1, 2, 0 ], [ 4, 0, 6 ], [ 7, 8, 9 ] ];
+console.log(matrixZeroing(m)); 
+// Output: [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 7, 0, 0 ] ] 
+```
+</TabItem>
+
+</Tabs>
+

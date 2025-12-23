@@ -1,0 +1,130 @@
+---
+slug: blog/2025/longest-common-subgroup-prefix
+title: Longest Common Prefix of the Maximal Subgroups
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Maps, ]
+date: 2025-11-13
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Write a function, longestCommonPrefix(strs), that determines the longest common prefix (LCP) found among any subgroup of strings within the input array, where the subgroups are defined by their starting character.
+This differs from the standard LCP problem, which requires the prefix to be common to all strings.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* longestCommonPrefix(['acc', 'accumulate', 'car', 'cardiac', 'currency', 'flower', 'flow', 'flight']) ➞ 'acc'
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+## Rules for Determining the Result
+
+1.  **Grouping:** The input array must first be partitioned into non-overlapping subgroups based on the first character of each string.
+2.  **Subgroup LCP:** The standard LCP algorithm must be run on every single subgroup.
+3.  **Maximal Prefix:** The final result is the single longest prefix string found across all of the generated subgroups.
+
+---
+
+## Input and Output
+
+| | Description | Example |
+| :--- | :--- | :--- |
+| **Input (`strs`)** | An array of strings (`string[]`). | `['acc', 'accumulate', 'car', 'cardiac', 'currency', 'flower', 'flow', 'flight']` |
+| **Output** | The single string representing the longest common prefix found among any subgroup. | `"acc"` |
+
+---
+
+## Example Walkthrough
+
+**Input Array:** `['acc', 'accumulate', 'car', 'cardiac', 'currency', 'flower', 'flow', 'flight']`
+
+| Subgroup Key | Subgroup Strings | Subgroup LCP | Length |
+| :---: | :--- | :--- | :---: |
+| **a** | `['acc', 'accumulate']` | `"acc"` | 3 |
+| **c** | `['car', 'cardiac', 'currency']` | `"c"` | 1 |
+| **f** | `['flower', 'flow', 'flight']` | `"fl"` | 2 |
+
+**Final Result:** The longest prefix found across all subgroups is **"acc"**.
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+// Helper function: Finds the Longest Common Prefix (LCP) for a sorted array of strings
+// Uses Vertical Scanning (character-by-character comparison).
+function findPref(arr){
+    let firstStr = arr[0] // Set the first string as the LCP anchor
+    
+    // Outer loop: Iterate through the characters of the anchor string (i)
+    for (let i = 0; i < firstStr.length; i++) {
+        let charToMatch = firstStr[i] // Current character being checked
+        
+        // Inner loop: Iterate through all other strings in the array (j)
+        for (let j = 1; j < arr.length; j++) {
+            let currStr = arr[j] // Get the current string for comparison
+            
+            // Mismatch check: If string is shorter OR characters don't match
+            if (i === currStr.length || currStr[i] !== charToMatch) {
+                // LCP found: return the common prefix up to index i
+                return firstStr.substring(0, i);
+            }
+        }
+    }
+    // If the loop finishes, the whole first string is the LCP
+    return firstStr;
+}
+
+
+// Main function: Finds the LCP among the largest subgroup of strings 
+// that share a starting character.
+function longestCommonPrefix(strs) {
+    // Handle empty input array
+    if (!strs || strs.length === 0) return "";
+    
+    let m = new Map(); // Map to group strings by their starting character
+    let overallLCP = "" // Stores the longest prefix found across all groups
+
+    // Stage 1: Grouping
+    for (let i of strs) {
+        let init = i[0] // Get the starting character
+        
+        // Initialize array for the character if not present
+        if(!m.has(init)){
+            m.set(init, [])
+        }
+        // Add the current string to its corresponding group
+        m.get(init).push(i)
+    }
+
+    // Stage 2: Calculate LCP for each group and track the maximum
+    for (const group of m.values()) {
+        if (group.length === 1) {
+            // Case: A single string group (LCP is the string itself)
+            const currentLCP = group[0];
+            if (currentLCP.length > overallLCP.length) {
+                overallLCP = currentLCP;
+            }
+        } else {
+            // Case: Group with multiple strings
+            // Use the Vertical Scanning helper (findPref)
+            const currentLCP = findPref(group);
+
+            // Update overall longest prefix
+            if (currentLCP.length > overallLCP.length) {
+                overallLCP = currentLCP;
+            }
+        }
+    }
+
+    return overallLCP; // Return the LCP of the longest subgroup
+}
+
+longestCommonPrefix(['acc', 'accumulate', 'car', 'cardiac', 'currency',"flower","flow","flight"])
+
+```
+</TabItem>
+
+</Tabs>
+

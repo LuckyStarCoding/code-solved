@@ -1,0 +1,73 @@
+---
+slug: blog/2025/find-sum-in-sorted-array
+title: Find Sum in a Sorted Array
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Pointers]
+date: 2025-10-27T15:40:00Z
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a sorted array of integers numbers and a target integer target, find two numbers in the array such that they add up to the target.
+Return the 1-based indices of the two numbers.
+Assume there is exactly one solution.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* sum([2, 7, 11, 15], 9) ➞ [1, 2]
+* sum([2, 3, 4], 6) ➞ [1, 3]
+* sum([-1, 0], -1) ➞ [1, 2]
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function sum(arr, t) {
+    // 1. Initialize the starting pointer (left pointer)
+    let s = 0;
+    
+    // 2. Initialize the ending pointer (right pointer)
+    let e = arr.length - 1;
+    
+    // 3. Loop as long as the pointers have not crossed (s < e).
+    while (s < e) {
+        // Calculate the current sum.
+        const currentSum = arr[s] + arr[e]; 
+
+        // 4. Case: Sum is too small. 
+        // Move the start pointer (s) to the right to increase the sum.
+        if (currentSum < t) {
+            s++;
+        } 
+        // 5. Case: Sum is too large. 
+        // Move the end pointer (e) to the left to decrease the sum.
+        else if (currentSum > t) {
+            e--;
+        } 
+        // 6. Case: Sum equals the target.
+        else {
+            // Return the 0-based indices of the two elements.
+            return [s, e];
+        }
+    }
+    
+    // 7. If the loop completes without finding a match, 
+    // it means no two elements sum to the target.
+    return 'Not found!'
+}
+
+// Example Execution:
+// sum([2, 7, 11, 15], 9) 
+// 1. s=0 (2), e=3 (15). Sum=17. 17 > 9, so e--.
+// 2. s=0 (2), e=2 (11). Sum=13. 13 > 9, so e--.
+// 3. s=0 (2), e=1 (7). Sum=9. 9 == 9. Return [0, 1].
+
+```
+</TabItem>
+
+</Tabs>
+

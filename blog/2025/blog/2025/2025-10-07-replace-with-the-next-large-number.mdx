@@ -1,0 +1,88 @@
+---
+slug: blog/2025/replace-with-the-next-large-number
+title: Replace with Next Largest Number
+authors: [luckystar]
+tags: [jstask, 2025, Map, Loops]
+date: 2025-10-07
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Write a function that replaces each integer with the next largest in the array.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+Specify the list of test cases
+
+* replaceNextLargest([5, 7, 3, 2, 8]) ➞ [7, 8, 5, 3, -1]
+* replaceNextLargest([2, 3, 4, 5]) ➞ [3, 4, 5, -1]
+* replaceNextLargest([1, 0, -1, 8, -72]) ➞ [8, 1, 0, -1, -1]
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+* Replace the maximum with -1.
+* Elements in the array will be unique.
+* You don't have to swap the elements.
+* Map can be helpful :wink:
+</TabItem>
+<TabItem value="solution1 " label="Solution 1" >
+```jsx 
+function replaceNextLargest(arr) {
+  let f = [];
+  let c = [...arr].sort((a, b) => a - b);
+  let m = new Map();
+  c.forEach((el, i) => m.set(el, c[i + 1] !== undefined ? c[i + 1] : -1));
+  arr.forEach((el) => f.push(m.get(el)));
+  return f;
+}
+
+```
+Explained:
+
+```jsx
+function replaceNextLargest(arr) {
+    // f will store the final result array with replaced values, maintaining the original order.
+    let f = [];
+
+    // c creates a shallow copy of the input array (arr) and sorts it numerically (ascending).
+    // This sorted array is essential for easily finding the "next largest" element.
+    let c = [...arr].sort((a,b)=>a-b);
+
+    // m is a Map that will store the replacement rules: Original Value -> Next Largest Value.
+    let m = new Map();
+
+    // Iterate through the sorted array (c) to build the replacement map (m).
+    c.forEach((el, i)=> {
+        // The key is the current element (el).
+        // The value is the next element in the sorted array, c[i+1], which is the "next largest."
+        // If c[i+1] is undefined (meaning el is the absolute largest/last element),
+        // we use -1 as the replacement value, as per the problem requirements.
+        m.set(el, c[i+1]!== undefined ? c[i+1] : -1 );
+    });
+
+    // Iterate through the original, unsorted array (arr) to apply the replacements.
+    arr.forEach(el=> {
+        // Look up the next largest value for the current element (el) in the map (m).
+        // Push the result (which is the replacement value) into the final array (f).
+        f.push(m.get(el));
+    });
+
+    // Return the final array with elements replaced by their next largest counterpart.
+    return f;
+}
+```
+
+</TabItem>
+
+<TabItem value="solution2" label="Solution 2" >
+```jsx 
+const replaceNextLargest=arr=>
+arr.map(e=>e==Math.max(...arr)?-1:Math.min(...arr.filter(el=>el>e)))
+```
+</TabItem>
+
+</Tabs>

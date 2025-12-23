@@ -1,0 +1,48 @@
+---
+slug: blog/2025/alphabetically-sorted
+title: Alphabetically Sorted
+authors: [luckystar]
+tags: [jstask, 2025, regex]
+date: 2025-10-07T15:30:00Z
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+A word is alphabetically sorted if all of the letters in it are in consecutive alphabetical order. Some examples of alphabetically sorted words: abhors (a is before b, b is before h, h is before o, etc.), ghost, accent, hoop.
+Create a function that takes in a sentence as input and returns true if there is at least one alphabetically sorted word inside that has a minimum length of 3.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* isAlphabeticallySorted("Paula has a French accent.") ➞ true 
+// "accent" is alphabetically sorted.
+* isAlphabeticallySorted("The biopsy returned negative results.") ➞ true
+// "biopsy" is alphabetically sorted.
+* isAlphabeticallySorted("She sells sea shells by the sea shore.") ➞ false
+// Although "by" is alphabetically sorted, it is only 2 letters long.
+</TabItem>
+<TabItem value="notes" label="Notes" >
+* Do not count words with 2 or fewer characters.
+* Ignore punctuation (periods, commas, etc).
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function isAlphabeticallySorted(sentence) {
+  return sentence
+    .split(" ")
+    .filter((el) => el.length >= 3)
+    .map((el) => el.match(/[a-z]/gi).join(""))
+    .map((el) => el.split("").sort().join("") === el)
+    .includes(true);
+}
+
+
+isAlphabeticallySorted("Paula has a French accent.")
+isAlphabeticallySorted("She sells sea shells by the sea shore.")
+```
+</TabItem>
+
+</Tabs>
+

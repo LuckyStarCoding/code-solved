@@ -1,0 +1,83 @@
+---
+slug: blog/2025/reverse-only-letters
+title: Reverse Only Letters
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Two-Pointer]
+date: 2025-11-26
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given a string `s`, reverse the string according to the following rules:
+
+1.  All the characters that are **not English letters** (i.e., numbers, symbols, punctuation) must **remain in the same position**.
+2.  All the **English letters** (lowercase `a-z` or uppercase `A-Z`) should be **reversed** in their respective positions.
+
+Return the string `s` after applying the reversal.
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+#### Example 1
+
+* **Input:** `s = "ab-cd"`
+* **Output:** `"dc-ba"`
+* **Explanation:** The letters 'a' swaps with 'd', and 'b' swaps with 'c'. The hyphen `-` remains in its original position.
+
+#### Example 2
+
+* **Input:** `s = "a-bC-dEf-ghIj"`
+* **Output:** `"j-Ih-gfE-dCba"`
+* **Explanation:** The eight English letters (`a`, `b`, `C`, `d`, `E`, `f`, `g`, `h`, `I`, `j`) are reversed in sequence, while the hyphens stay fixed.
+
+#### Example 3
+
+* **Input:** `s = "Test1ng-Leet=code-Q!"`
+* **Output:** `"Qedo1ct-eeLg=ntse-T!"`
+* **Explanation:** The letters are reversed (e.g., 'T' swaps with 'Q'), but all non-letters (`1`, `-`, `=`, `!`) maintain their original positions.
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+let reverseOnlyLetters = function(s) {
+    // Convert the string to an array for mutable, in-place swapping
+    let arr = [...s];
+    // Initialize two pointers: 'l' at the start and 'r' at the end
+    let l = 0;
+    let r = arr.length - 1;
+    
+    // Regular expression to test if a character is an English letter
+    const isLetter = (char) => (/[a-zA-Z]/).test(char);
+
+    // Continue swapping as long as the left pointer is to the left of the right pointer
+    while (l < r) {
+        // If the character at the left pointer is NOT a letter, move 'l' right
+        if (!isLetter(arr[l])) {
+            l++;
+        } 
+        // Else if the character at the right pointer is NOT a letter, move 'r' left
+        else if (!isLetter(arr[r])) {
+            r--;
+        } 
+        // If both characters are letters, swap them
+        else {
+            // Swap the letters using array destructuring
+            [arr[l], arr[r]] = [arr[r], arr[l]];
+            // Move both pointers inward
+            l++;
+            r--;
+        }
+    }
+    // Join the array back into a string and return the result
+    return arr.join('');
+}
+
+reverseOnlyLetters("Test1ng-Leet=code-Q!")
+
+```
+</TabItem>
+
+</Tabs>
+

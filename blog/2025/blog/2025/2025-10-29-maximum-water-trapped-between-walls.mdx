@@ -1,0 +1,82 @@
+---
+slug: blog/2025/maximum-water-trapped-between-walls
+title: Maximum Water Trapped Between Walls
+authors: [luckystar]
+tags: [jstask, 2025, Arrays]
+date: 2025-10-29
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an array walls of wall heights, calculate the maximum volume of water that will be trapped between two walls and the x-axis after a heavy downpour.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+
+* maximumWaterBetweenWalls([1,4,2,3]) ➞ 6
+* maximumWaterBetweenWalls([1,1]) ➞ 1
+* maximumWaterBetweenWalls([1,0]) ➞ 0
+
+</TabItem>
+<TabItem value="notes" label="Notes" >
+The most efficient way to solve the "Container With Most Water" problem is using the Two Pointers technique, which ensures you check the best possible distance combinations.
+
+**The Logic**
+1. Start with two pointers: one at the **far left** (l = 0) and one at the **far right** (r = walls.length - 1). This gives you the maximum possible width/distance.
+2. In each step, calculate the water volume for the current pair of walls.
+3. Move the pointer of the **shorter wall** inwards. The distance is already at its maximum, so the only way to potentially increase the area is to find a taller wall to replace the shorter one. Moving the taller wall inward is guaranteed to reduce the volume.
+4. Repeat until the pointers meet.
+
+</TabItem>
+<TabItem value="solution" label="Solution" >
+```jsx 
+function maximumWaterBetweenWalls(walls) {
+    // 1. Initialize the left pointer at the beginning of the array.
+    let left = 0;
+    
+    // 2. Initialize the right pointer at the end of the array.
+    // Starting with the maximum width is key to this algorithm.
+    let right = walls.length-1;
+    
+    // 3. Initialize the variable to store the maximum area (volume) found so far.
+    let maxVolume = 0;
+    
+    // The main loop runs as long as the two pointers haven't crossed.
+    while (left < right) {
+        
+        // 4. Determine the height of the container. 
+        // The container height is limited by the shorter of the two walls.
+        let height = Math.min(walls[left], walls[right]);
+        
+        // 5. Calculate the width of the container (distance between the walls).
+        let width = right-left
+        
+        // 6. Calculate the volume (area) for the current container.
+        let volume = height*width
+        
+        // 7. Update the maximum volume if the current volume is larger.
+        maxVolume = Math.max(volume, maxVolume);
+
+        // 8. Optimization step: Move the shorter pointer inward.
+        // We move the shorter wall because replacing the taller wall would 
+        // definitely result in a smaller or equal height (Math.min) and a smaller width,
+        // which guarantees a smaller or equal volume. Moving the shorter wall 
+        // gives us the chance to find a taller wall and increase the height.
+        if(walls[left] < walls[right]){
+            left++ // Increment the left pointer if the left wall is shorter.
+        } else {
+            right-- // Decrement the right pointer if the right wall is shorter or they are equal.
+        }
+    }
+    // 9. Return the largest area (volume) found after checking all potential pairs.
+    return maxVolume;
+}
+
+```
+</TabItem>
+
+</Tabs>
+

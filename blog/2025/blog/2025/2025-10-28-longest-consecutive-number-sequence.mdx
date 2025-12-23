@@ -1,0 +1,45 @@
+---
+slug: blog/2025/longest-consecutive-number-sequence
+title: Longest Consecutive Number Sequence
+authors: [luckystar]
+tags: [jstask, 2025, Arrays, Sequences]
+date: 2025-10-28
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Given an unsorted array of integers numbers, determine the length of the longest sequence where the integers appear consecutively, 
+meaning the numbers follow one another without any gaps.
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+* longestConsecutiveNumberSeq([5,1,-4]) ➞ 1
+* longestConsecutiveNumberSeq([1,-1,-1,-4,-5]) ➞ 2
+* longestConsecutiveNumberSeq([1,-1,0,8,11,10,9,9]) ➞ 4
+
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+```jsx 
+function longestConsecutiveNumberSeq(nums) {
+  let s = Array.from(new Set(nums.sort((a,b)=>a-b)));
+    let currentCount = 1;
+    let maxCount = 1;
+    for (let i = 0; i < s.length; i++) {
+        if(s[i + 1] === s[i] + 1) {currentCount++} 
+        else {
+            maxCount = Math.max(maxCount, currentCount)
+            currentCount = 1;
+        } 
+    }
+    return maxCount;
+}
+
+```
+</TabItem>
+
+</Tabs>
+
