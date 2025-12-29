@@ -6,7 +6,7 @@
 
 import {themes as prismThemes} from 'prism-react-renderer';
 
-/** @type {import('@docusaurus/types').Config} */
+/*@type {import('@docusaurus/types').Config} */
 const path = require('path');
 const config = {
 title: 'Code Solved', // Updated for your project
