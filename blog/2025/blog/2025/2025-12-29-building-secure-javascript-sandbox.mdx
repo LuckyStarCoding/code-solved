@@ -1,0 +1,180 @@
+---
+slug: blog/2025/building-secure-javascript-sandbox
+title: Building a Secure JavaScript Sandbox
+authors: [luckystar]
+tags: [2025, Security]
+date: 2025-12-29
+---
+
+# Building a Secure JavaScript Sandbox: A DocOps Guide
+
+When building a live code editor for a technical blog, providing a space for users to run arbitrary code is a major security responsibility. Without a **"Zero Trust"** architecture, a malicious snippet could steal cookies, hijack the UI, or perform Cross-Site Request Forgery (CSRF).
+
+This guide outlines how to transform a standard code editor into a multi-layered security vault.
+
+---
+
+## Phase 1: The Isolation Layer (Sandboxed iFrame)
+
+The first line of defense is moving code execution from the main window into a **Sandboxed `<iframe>`**. By default, an iFrame can share the same origin as its parent; for a secure editor, this bond must be broken.
+
+### Technical Implementation
+
+To achieve true isolation, use the `sandbox` attribute but explicitly **omit** `allow-same-origin`. This creates a "null origin" environment.
+
+```javascript
+/* CRITICAL: No 'allow-same-origin' here! */
+<iframe
+  title="Secure Sandbox"
+  sandbox="allow-scripts" 
+  srcDoc={iframeDoc}
+  style={{ width: '100%', height: '200px', border: 'none' }}
+/>
+```
+
+## Phase 2: The Network Layer (Internal CSP)
+
+Isolation is insufficient if the script can still communicate with external servers. Even in a sandboxed iFrame, a malicious script could attempt to exfiltrate data via a `fetch()` request or by loading external tracking pixels. To prevent this, we enforce a **Content Security Policy (CSP)** via a `<meta>` tag inside the iFrame.
+
+### Technical Implementation
+
+Inject this meta tag into the `<head>` of your iFrame's HTML template. This policy creates a "closed loop" environment where only the code you provide can run.
+
+```javascript
+const htmlTemplate = `
+  <html>
+    <head>
+      <meta http-equiv="Content-Security-Policy" 
+            content="default-src 'none'; 
+                     script-src 'unsafe-inline' 'unsafe-eval'; 
+                     style-src 'unsafe-inline';">
+    </head>
+    <body>
+       </body>
+  </html>
+`;
+
+```
+:::tip Security Verification
+**`default-src 'none'`** is the **"Golden Rule"** of web security. It creates a "deny-by-default" posture that ensures even if an attacker manages to execute code within the sandbox, they are effectively trapped:
+
+* **No Data Exfiltration:** They cannot "phone home" to a remote API to send stolen information.
+* **No External Payloads:** They cannot download external scripts, images, or fonts to escalate the attack.
+* **No Plugin Exploits:** It prevents the loading of objects or media that could trigger browser-level vulnerabilities.
+:::
+
+# Phase 3: The Injection Guard (JSON.stringify)
+
+Passing user code into an execution engine (like `eval()`) creates a high risk of **"string breakout"** attacks. If a user inputs backticks (`` ` ``) or specific escape characters, they can prematurely end your wrapper string and execute code in your main application context.
+
+### Technical Implementation
+
+1.  **Sanitize Script Tags:** Replace `</script>` to prevent the browser from closing the container's script block early.
+2.  **Use JSON.stringify:** Instead of template literals, use `JSON.stringify` to wrap the code safely.
+
+
+
+```javascript
+// ❌ DON'T DO THIS: Vulnerable to backtick/template breakout
+// const result = eval(`${userCode}`); 
+
+// ✅ DO THIS: Securely escapes all special characters
+const sanitizedCode = userCode.replace(/<\/script>/g, '<\\/script>');
+const result = eval(${JSON.stringify(sanitizedCode)});
+```
+:::info Security Verification
+**`JSON.stringify`** converts the user code into a quoted data string before it ever reaches the execution engine. This creates a critical layer of separation:
+
+* **Prevents "Breakouts":** Characters like backticks (`` ` ``) or quotes that usually trick the interpreter into exiting a string are automatically escaped (e.g., `"` becomes `\"`).
+* **Data-First Handling:** This ensures the engine sees the input strictly as a **data payload** rather than executable logic during the injection phase.
+* **Encoding Integrity:** It handles complex characters and line breaks that would otherwise break a standard template literal.
+:::
+
+
+## Phase 4: Stability & Scope (IIFE Wrapper)
+
+To ensure variables from one "Run" don't leak into the next and to prevent **global scope pollution**—which could overwrite your internal sandbox helpers or break the editor's UI—the user logic must be encapsulated.
+
+
+
+### Technical Implementation
+
+We wrap the execution in an **Immediately Invoked Function Expression (IIFE)**. This creates a private scope for the user's variables, ensuring that a `const x = 1` in the first run doesn't throw a "SyntaxError: Identifier 'x' has already been declared" when the user clicks "Run" again.
+
+```javascript
+(function() {
+  try {
+    // Execution happens inside a private scope
+    const result = eval(${JSON.stringify(sanitizedCode)});
+    
+    if (result !== undefined) {
+      logToScreen(result);
+    }
+  } catch (err) {
+    handleError(err);
+  }
+})();
+```
+
+:::tip Why this matters
+By using an **IIFE (Immediately Invoked Function Expression)**, you are protecting the sandbox's internal functions (like `logToScreen` and `handleError`). 
+
+
+
+Without this wrapper, a user could accidentally (or intentionally) write `const logToScreen = null;`. Because the script runs in the same global context, this would overwrite your helper function and break the output display for all subsequent code executions until the page is hard-refreshed.
+:::
+
+## Phase 5: The Output Layer (Safe Rendering)
+
+The final checkpoint is displaying the results. If you use `.innerHTML` to show user output or error messages, you are vulnerable to **Error-based XSS**. An attacker could craft a script that intentionally throws an error containing a malicious payload, triggering execution when that error is rendered.
+
+
+
+### Technical Implementation
+
+Always use **`.textContent`** for dynamic data. This ensures that even if a user tries to "log" a payload like `<img src=x onerror=alert(1)>`, the browser treats it as a literal string and renders it as harmless text rather than executing the `onerror` event.
+
+```javascript
+// Secure Logging Function
+const logToScreen = (msg) => {
+  const line = document.createElement('div');
+  
+  // ✅ textContent neutralizes HTML/Script payloads automatically
+  line.textContent = '> ' + (typeof msg === 'object' ? JSON.stringify(msg) : msg);
+  outputDiv.appendChild(line);
+};
+
+// Syntax Guard for JSX
+if (err.message.includes("Unexpected token '<'")) {
+   // .innerHTML is safe here ONLY because the string is hardcoded and static
+   errDiv.innerHTML = '<strong>Syntax Error:</strong> Logic runner only.'; 
+}
+```
+
+:::warning The .innerHTML Exception
+Note that we only use `.innerHTML` for the **Syntax Error** message because the string is hardcoded by us (the developers). 
+
+
+
+**Never pass `err.message` directly into `.innerHTML`.** Many runtime errors include parts of the code that failed; if that code contains a malicious script, using `.innerHTML` would execute it immediately. Always treat error messages as untrusted data.
+:::
+
+## 📊 Security Architecture Recap
+
+To ensure a **"Zero Trust"** environment, we implement a defense-in-depth strategy across five distinct layers of protection.
+
+
+
+| Phase | Layer | Technology | Security Purpose |
+| :--- | :--- | :--- | :--- |
+| **1** | **Isolation** | `iframe` (No Same-Origin) | Creates a "null origin" to prevent access to parent cookies and `localStorage`. |
+| **2** | **Network** | Meta CSP (`default-src 'none'`) | Acts as a firewall to prevent scripts from "phoning home" or loading external payloads. |
+| **3** | **Injection** | `JSON.stringify` | Ensures user code is treated as a safe data string, preventing "template breakouts." |
+| **4** | **Stability** | IIFE Wrapper | Encapsulates variables to prevent global scope pollution and helper function overwriting. |
+| **5** | **Output** | `.textContent` | Neutralizes XSS by rendering all dynamic results and errors as literal text. |
+
+---
+
+## 🛡️ Final Expert Note
+
+Building a sandbox is an exercise in **"Defense in Depth."** No single layer is perfect, but by stacking these five protections, you create an environment where users can experiment freely with JavaScript without putting your host site or your readers at risk. Always remember: in security, **redundancy is a feature, not a bug.**

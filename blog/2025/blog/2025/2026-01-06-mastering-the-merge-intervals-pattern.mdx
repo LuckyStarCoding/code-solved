@@ -1,0 +1,140 @@
+---
+slug: blog/2025/mastering-the-merge-intervals-pattern
+title: Mastering the Merge Intervals Pattern
+authors: [luckystar]
+tags: [jstask, 2025]
+date: 2026-01-06
+
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Mastering the Merge Intervals Pattern
+
+The **Merge Intervals** problem is a classic greedy algorithm challenge. The core difficulty isn't the merging itself, but ensuring you don't miss overlapping cases due to an unorganized input.
+
+---
+
+### 1. The "Golden Rule": Sort First
+The most critical step—and the one most often forgotten under interview pressure—is **sorting**. You cannot efficiently merge intervals if they are scattered.
+
+**Why?** By sorting by the start time, you ensure that if two intervals overlap, they will be adjacent (or near-adjacent) in your list.
+
+
+
+> **Security & Performance Tip:** Sorting typically takes O(n \log n). Be mindful of this complexity if you are running this on a real-time server with massive datasets.
+
+---
+
+### 2. The Logic: Comparing Boundaries
+Once sorted, you only need to compare the current interval's start with the previous interval's end.
+
+#### Overlap exists if: 
+`currentStart <= previousEnd`
+
+**Action:** Update the `previousEnd` to be the maximum of both ends:
+```Math.max(previousEnd, currentEnd)```
+
+#### No overlap: 
+Just push the current interval into your result set; it becomes the new "previous" for the next comparison.
+
+```javascript
+// Pseudo-code Implementation
+if (currentStart <= previousEnd) {
+    // There is an overlap, merge the current and previous intervals
+    previousInterval[1] = Math.max(previousEnd, currentEnd);
+} else {
+    // No overlap, add the current interval to the results
+    result.push(currentInterval);
+}
+```
+
+### Common Pitfalls to Avoid
+
+When implementing the Merge Intervals pattern for the first time, there are two logic traps that almost every developer falls into.
+
+---
+
+#### 1. Comparing "Neighbors" instead of "The Result"
+
+The most frequent mistake is comparing `intervals[i]` directly with `intervals[i + 1]` throughout the loop. The issue with this approach is that once you merge two intervals, that new "merged" entity must be compared against the **next** one in the list.
+
+#### The Bug in Action
+Imagine your input is `[[1, 3], [2, 6], [8, 10]]`:
+
+1.  **Step 1:** You compare `[1, 3]` and `[2, 6]`. They overlap, so you push `[1, 6]` to your result.
+2.  **Step 2:** The loop moves to the next index. You compare `[2, 6]` and `[8, 10]`. They don’t overlap, so you push `[2, 6]` into your result.
+3.  **The Result:** Your array now contains `[[1, 6], [2, 6]]`.
+
+
+
+**The Fix:** You aren't "carrying over" the merge. To fix this, you must always compare the incoming interval against the **last interval added to your result set**.
+
+---
+
+#### 2. The Overlap Condition (Inclusive Boundaries)
+
+Check your comparison operator. Many beginners use a "strictly greater than" logic: `if (end > start)`. 
+
+However, in the vast majority of interval problems, if one interval ends at `3` and the next starts at `3`, they are considered overlapping.
+
+> #### 💡 Rule of Thumb
+> Use the inclusive operator: `if (currentStart <= previousEnd)`.
+
+Always double-check the problem constraints—if the prompt specifically says intervals are "non-overlapping" when they touch at a single point, only then would you use the strictly less than operator.
+
+### The "Growing Boundary" Checklist
+
+To ensure you don't lose track of the "growing" interval during the merge process, follow this mental framework:
+
+1.  **Sort the Input**: Order by `start` time. Without this, the greedy neighbor comparison fails.
+2.  **Seed the Result**: Initialize your result array with the first interval `[0]`.
+3.  **Loop from Index 1**: Start comparing the second interval against your result set.
+4.  **The Reference Comparison**: Always compare `current.start` with `result.last().end`.
+5.  **Expand the Boundary**: If they overlap, update `result.last().end` using `Math.max()` to ensure the boundary only ever moves forward.
+
+### Solution
+
+```jsx
+/**
+ * Merges overlapping intervals.
+ * Time Complexity: O(n log n) due to sorting.
+ * Space Complexity: O(n) to store the result.
+ */
+let merge = function(int) {
+    // 1. Critical Step: Sort by the start time.
+    // Without this, the greedy approach of checking neighbors won't work.
+    let s = int.sort((a, b) => a[0] - b[0]);
+    
+    // 2. Initialize result with the first interval.
+    // This acts as our "active" interval to compare against.
+    let f = [s[0]]; 
+    
+    for (let i = 1; i < s.length; i++) {
+        let lastMerged = f[f.length - 1]; // The last interval added to our result
+        let curr = s[i];                 // The current interval in the loop
+        
+        // 3. Check for overlap: Does the current start fall within the last range?
+        if (curr[0] <= lastMerged[1]) {
+            // Overlap detected! 
+            // Update the end of the last interval to cover the new extent.
+            // We use Math.max because the current interval might be shorter than the last.
+            lastMerged[1] = Math.max(lastMerged[1], curr[1]);
+        } else {
+            // 4. No overlap: The current interval starts after the last one ends.
+            // Push it as a new distinct interval.
+            f.push(curr);
+        }
+    }
+    
+    return f;  
+};
+
+// Example usage:
+// Input: [[1,3],[2,6],[8,10],[15,18]]
+// 1 and 2 overlap -> [1,6]
+// 6 and 8 do NOT overlap -> new interval
+merge([[1, 3], [2, 6], [8, 10], [15, 18]]);
+
+```
