@@ -155,3 +155,15 @@ function longestCommonPrefix(strs) {
 }
 
 longestCommonPrefix(['acc', 'accumulate', 'car', 'cardiac', 'currency',"flower","flow","flight"])
+
+
+
+const yourFunction = (arg) => {
+ // Your code goes here
+
+return arg
+
+};
+
+yourFunction('Hello')
+

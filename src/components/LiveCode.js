@@ -1,117 +1,116 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import '../css/live-editor.css';
 
 const LiveCodeEditor = ({ code: initialCode }) => {
   const [EditorTools, setEditorTools] = useState(null);
   const [editorCode, setEditorCode] = useState(initialCode.trim());
-  const [iframeDoc, setIframeDoc] = useState('');
+  const iframeRef = useRef(null);
 
   useEffect(() => {
-    // Dynamic import for react-live to handle Docusaurus SSR
+    // Dynamic import for react-live to support SSR
     const tools = require('react-live');
     setEditorTools(tools);
   }, []);
 
-const generateSafeHtml = (userCode) => {
-    // 1. ESCAPE: Prevent script tag breakout
-    const sanitizedCode = userCode.replace(/<\/script>/g, '<\\/script>');
+  // Phase 2 & 5: The Iframe Template with CSP and Safe Rendering
+  const iframeHtml = `
 
-    return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline';">
-          <style>
-            body { font-family: -apple-system, sans-serif; padding: 15px; line-height: 1.5; color: #333; }
-            #output { font-family: 'Fira Code', monospace; font-size: 13px; white-space: pre-wrap; }
-            .error-box { color: #d73a49; background: #ffeef0; padding: 10px; border-radius: 4px; border: 1px solid #f97583; font-size: 13px; }
-            .hint { color: #6e7681; font-size: 11px; margin-top: 5px; display: block; }
-          </style>
-        </head>
-        <body>
-          <div id="output"></div>
-          <script>
-            (function() {
-              const outputDiv = document.getElementById('output');
-              
-              const logToScreen = (msg) => {
-                const line = document.createElement('div');
-                line.textContent = '> ' + (typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg);
-                outputDiv.appendChild(line);
-              };
 
-              window.render = logToScreen;
-              window.console.log = logToScreen;
+  
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Security-Policy" 
+            content="default-src 'none'; 
+                     script-src 'unsafe-inline' 'unsafe-eval'; 
+                     style-src 'unsafe-inline';">
+        <style>
+          body { font-family: sans-serif; color: #333; margin: 0; padding: 10px; font-size: 14px; }
+          .log-line { border-bottom: 1px solid #eee; padding: 2px 0; font-family: monospace; }
+          .error { color: #ff0000; }
+        </style>
+      </head>
+      <body>
+        <div id="output"></div>
+        <script>
+          const outputDiv = document.getElementById('output');
+          
+          // Phase 5: Safe Logging using textContent
+          const logToScreen = (msg, isError = false) => {
+            const line = document.createElement('div');
+            line.className = isError ? 'log-line error' : 'log-line';
+            line.textContent = '> ' + (typeof msg === 'object' ? JSON.stringify(msg) : msg);
+            outputDiv.appendChild(line);
+          };
 
+          window.addEventListener('message', (event) => {
+            const { action, code } = event.data;
+            if (action === 'run') {
+              outputDiv.innerHTML = ''; // Clear previous output
               try {
-                // 2. EXECUTION: Using eval to capture the last expression result
-                const result = eval(${JSON.stringify(sanitizedCode)});
-                
-                if (result !== undefined) {
-                  logToScreen(result);
-                }
+                // Phase 4: IIFE Wrapper for scope isolation
+                (function() {
+                  const result = eval(code);
+                  if (result !== undefined) logToScreen(result);
+                })();
               } catch (err) {
-                const errDiv = document.createElement('div');
-                errDiv.className = 'error-box';
-                
-                // 3. CLARITY: Check for JSX/HTML tags (which cause the '<' error)
-                if (err.message.includes("Unexpected token '<'") || err.name === 'SyntaxError') {
-                   errDiv.innerHTML = '<strong>Syntax Error:</strong> HTML/JSX tags detected.';
-                   const hint = document.createElement('span');
-                   hint.className = 'hint';
-                   hint.textContent = 'This editor supports Pure JavaScript logic. Please use strings like "Hello" instead of <div>Hello</div>.';
-                   errDiv.appendChild(hint);
-                } else {
-                   errDiv.innerHTML = '<strong>Runtime Error:</strong> ';
-                   const msg = document.createElement('span');
-                   msg.textContent = err.message;
-                   errDiv.appendChild(msg);
-                }
-                
-                document.body.appendChild(errDiv);
+                logToScreen(err.message, true);
               }
-            })();
-          </script>
-        </body>
-      </html>
-    `;
-  };
-  if (!EditorTools) return <div>Loading Secure Editor...</div>;
-  const { LiveProvider, LiveEditor } = EditorTools;
+            }
+          });
+        </script>
+      </body>
+    </html>
+  `;
 
-  const handleRun = () => setIframeDoc(generateSafeHtml(editorCode));
+  const handleRun = () => {
+    if (iframeRef.current) {
+      // Phase 3: Injection Guard & Stringify
+      const sanitizedCode = editorCode.replace(/<\/script>/g, '<\\/script>');
+      
+      // Send code to sandbox via postMessage
+      iframeRef.current.contentWindow.postMessage(
+        { action: 'run', code: sanitizedCode }, 
+        '*'
+      );
+    }
+  };
+
   const handleReset = () => {
     setEditorCode(initialCode.trim());
-    setIframeDoc('');
   };
 
+  if (!EditorTools) return <div className="live-code-output">Loading Editor...</div>;
+
+  const { LiveProvider, LiveEditor } = EditorTools;
+
   return (
-    <div className="live-code-container" style={{ border: '1px solid #30363d', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px' }}>
-      <LiveProvider code={editorCode} noInline={true}>
-        {/* Input Area */}
-        <div style={{ background: '#0d1117', padding: '10px' }}>
+    <div className="live-code-container">
+      <LiveProvider code={editorCode}>
+        <div className="live-code-editor-wrapper">
           <LiveEditor 
             onChange={code => setEditorCode(code)} 
             style={{ fontFamily: 'monospace', fontSize: '14px' }} 
           />
         </div>
 
-        {/* Action Bar */}
-        <div style={{ padding: '8px 15px', background: '#161b22', borderTop: '1px solid #30363d', display: 'flex', gap: '10px' }}>
+        <div className="live-code-controls">
           <button onClick={handleRun} className="live-btn live-btn-run">▶ Run Code</button>
           <button onClick={handleReset} className="live-btn live-btn-reset">↺ Reset</button>
         </div>
-
-        {/* Sandbox Output */}
-        <div style={{ background: '#ffffff', padding: '15px' }}>
-          <small style={{ color: '#6e7681', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '10px' }}>
-            🔒 Sandboxed Output
-          </small>
+        
+        <div className="live-code-output">
+          <span className="live-code-label">Secure Sandbox Output:</span>
+          <hr style={{ margin: '10px 0', opacity: '0.1' }} />
+          
+          {/* Phase 1: The Isolation Layer (Sandboxed iFrame) */}
           <iframe
+            ref={iframeRef}
             title="Secure Sandbox"
-            sandbox="allow-scripts" 
-            srcDoc={iframeDoc}
-            style={{ width: '100%', height: '200px', border: 'none', marginTop: '10px' }}
+            sandbox="allow-scripts"
+            srcDoc={iframeHtml}
+            style={{ width: '100%', height: '150px', border: 'none', background: '#f9f9f9' }}
           />
         </div>
       </LiveProvider>

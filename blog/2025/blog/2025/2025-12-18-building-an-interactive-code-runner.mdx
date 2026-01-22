@@ -23,7 +23,8 @@ npm install react-live prism-react-renderer
 
 ## 🎨 Step 2: Create CSS for the New Component
 
-Create a new file at src/css/live-editor.css (or add this to your existing custom.css):
+Create a new file at `src/css/live-editor.css` (or add this to your existing custom.css):
+
 ```
 CSS
 
@@ -95,13 +96,14 @@ CSS
 
 ## 🏗️ Step 3: Create the LiveCode Component
 
+Create a .js or jsx file in your components folder. For example, `src/components/LiveCode.js`
 To handle Server-Side Rendering (SSR) in Docusaurus, create your component using the following structure:
 
 ```javascript
-import React, { useState, useEffect } from 'react';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import React, { useState, useEffect } from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 // Import the new CSS file
-import './live-editor.css'; 
+import "../css/live-editor.css";
 
 const LiveCodeEditor = ({ code: initialCode }) => {
   const [EditorTools, setEditorTools] = useState(null);
@@ -109,11 +111,12 @@ const LiveCodeEditor = ({ code: initialCode }) => {
   const [runCode, setRunCode] = useState(initialCode.trim());
 
   useEffect(() => {
-    const tools = require('react-live');
+    const tools = require("react-live");
     setEditorTools(tools);
   }, []);
 
-  if (!EditorTools) return <div className="live-code-output">Loading Editor...</div>;
+  if (!EditorTools)
+    return <div className="live-code-output">Loading Editor...</div>;
 
   const { LiveProvider, LiveEditor, LiveError, LivePreview } = EditorTools;
 
@@ -126,17 +129,19 @@ const LiveCodeEditor = ({ code: initialCode }) => {
   return (
     <div className="live-code-container">
       <LiveProvider code={runCode} noInline={true}>
-        
         <div className="live-code-editor-wrapper">
-          <LiveEditor 
-            code={editorCode} 
-            onChange={code => setEditorCode(code)} 
-            style={{ fontFamily: 'monospace', fontSize: '14px' }} 
+          <LiveEditor
+            code={editorCode}
+            onChange={(code) => setEditorCode(code)}
+            style={{ fontFamily: "monospace", fontSize: "14px" }}
           />
         </div>
 
         <div className="live-code-controls">
-          <button onClick={() => setRunCode(editorCode)} className="live-btn live-btn-run">
+          <button
+            onClick={() => setRunCode(editorCode)}
+            className="live-btn live-btn-run"
+          >
             ▶ Run Code
           </button>
           <button onClick={handleReset} className="live-btn live-btn-reset">
@@ -145,10 +150,10 @@ const LiveCodeEditor = ({ code: initialCode }) => {
         </div>
 
         <LiveError className="live-code-error" />
-        
+
         <div className="live-code-output">
           <span className="live-code-label">Output:</span>
-          <hr style={{ margin: '10px 0', opacity: '0.1' }} />
+          <hr style={{ margin: "10px 0", opacity: "0.1" }} />
           <LivePreview />
         </div>
       </LiveProvider>
@@ -162,25 +167,25 @@ export default function LiveCode(props) {
 ```
 
 ## ⚙️ Step 4: Configure Webpack Alias (The Essential Fix)
+
 To prevent the TypeError: Cannot read properties of null (reading 'useState'), we must force the project to use a single instance of React.
 Update: `docusaurus.config.js`
 
-
 ```jsx
-const path = require('path');
+const path = require("path");
 
 const config = {
   // ... existing config (title, url, etc.)
 
   plugins: [
     () => ({
-      name: 'resolve-react',
+      name: "resolve-react",
       configureWebpack() {
         return {
           resolve: {
             alias: {
-              react: path.resolve(__dirname, 'node_modules/react'),
-              'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+              react: path.resolve(__dirname, "node_modules/react"),
+              "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
             },
           },
         };
@@ -191,46 +196,61 @@ const config = {
 
 module.exports = config;
 ```
+
 ## 💻 Step 5: Usage in MDX
+
 Now you can use the component in any .mdx file.
 
 ```jsx
+import LiveCode from "@site/src/components/LiveCode";
 
-import LiveCode from '@site/src/components/LiveCode';
-
-<LiveCode code={`
-const topKFrequent = (nums, k) => {
- // Your code goes here
-};
-
-render(
-  <div style={{ color: 'darkgreen' }}>
-    Result: {JSON.stringify(topKFrequent([1,1,1,2,2,3], 2))}
-  </div>
-);
-`} />
+<LiveCode
+  code={`
+    const yourFunction = (arg) => {
+      // Your code goes here
+      return arg
+  };
+  yourFunction('Hello')
+`}
+/>;
 ```
+
 ## 📋 Step 6: Troubleshooting & Maintenance
+
 If you add new libraries and the editor breaks, use this Nuclear Reset in PowerShell:
 
 PowerShell
 
 1. Clear caches:
 
-```jsx 
+```jsx
 Remove-Item -Recurse -Force .docusaurus, build, .cache -ErrorAction SilentlyContinue
 ```
 
 2. Reset Node Modules:
 
-```jsx 
+```jsx
 Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue
 ```
 
 3. Reinstall and Start
-```jsx 
+
+```jsx
 npm install
 npm start
 ```
 
 4. Sometimes when an error occurs while adding/updating the components, press `Ctrl+C` and then run `npm start`.
+
+## What Files were Involved
+
+| File Path                            | Purpose                                                                                         |
+| :----------------------------------- | :---------------------------------------------------------------------------------------------- |
+| **`src/components/LiveCode.js`**     | The main React component that handles the editor and preview.                                   |
+| **`src/components/live-editor.css`** | The styling for your sandbox (which you recently fixed the path for).                           |
+| **`docusaurus.config.js`**           | Where you might add **Content Security Policy (CSP)** headers to further lock down the site.    |
+| **`src/theme/CodeBlock`**            | (Optional) If you "swizzled" this, it replaces all standard code blocks with your live sandbox. |
+
+## From Execution to Isolation
+
+Building an interactive code runner is an exciting milestone, but it opens a critical door to security risks. When you allow users to execute code directly on your infrastructure, you are essentially handing over the keys to your system’s resources. Without strict boundaries, malicious scripts could access sensitive data, consume infinite memory, or compromise your server entirely. To transition from a functional tool to a production-ready application, your next essential step is [Building a Secure JavaScript Sandbox](./building-an-interactive-code-runner), where we will explore how to isolate execution environments and neutralize these threats before they can do harm.

@@ -12,6 +12,24 @@ When building a live code editor for a technical blog, providing a space for use
 
 This guide outlines how to transform a standard code editor into a multi-layered security vault.
 
+# Implementation Roadmap: LiveCode Component
+
+| Phase | Action | File Involved | Location in Code |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | Create the `<iframe>` | `src/components/LiveCode.js` | Inside the `return` statement of your React component. |
+| **Phase 2** | Inject the `<meta>` CSP | `src/components/LiveCode.js` | Inside a string variable (e.g., `const htmlTemplate`). |
+| **Phase 3** | Sanitize & Stringify | `src/components/LiveCode.js` | Inside the `handleRun` or `useEffect` function. |
+| **Phase 4** | Wrap in IIFE | `src/components/LiveCode.js` | Within the string that gets sent to the Iframe. |
+| **Phase 5** | `.textContent` Rendering | `src/components/LiveCode.js` | Inside the `htmlTemplate` string (script section). |
+
+---
+
+### Implementation Notes
+
+* **Security:** Ensure the Content Security Policy (CSP) in Phase 2 is restrictive enough to prevent XSS while allowing your intended scripts to run.
+* **Performance:** Wrapping code in an **IIFE** (Immediately Invoked Function Expression) in Phase 4 helps prevent variable collisions within the iframe global scope.
+* **Rendering:** Using `.textContent` is a best practice to avoid executing malicious HTML tags during the rendering phase.
+
 ---
 
 ## Phase 1: The Isolation Layer (Sandboxed iFrame)

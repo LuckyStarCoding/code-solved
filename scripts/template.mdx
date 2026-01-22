@@ -2,12 +2,13 @@
 slug: blog/2025/template
 title: Template
 authors: [luckystar]
-tags: [jstask, 2025]
-date: 2025-09-19
+tags: [jstask, 2026]
+date: 2026-01-20
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from '@site/src/components/LiveCode';
 
 Specify the description of the task.
 
@@ -26,11 +27,13 @@ Specify the list of test cases
 <TabItem value="notes" label="Notes" >
     Specify additional information for the task (if any)
 </TabItem>
-<TabItem value="solution" label="Solution" >
-```jsx 
-Specify the solution.
+<TabItem value="solution" label="Try" >
 
-```
+<LiveCode code={`
+const topKFrequent = (nums, k) => {
+ // Your code goes here
+};
+`} />
 </TabItem>
 
 </Tabs>
