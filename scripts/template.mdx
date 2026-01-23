@@ -8,7 +8,7 @@ date: 2026-01-20
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import LiveCode from '@site/src/components/LiveCode';
+import LiveCode from "@site/src/components/LiveCode";
 
 Specify the description of the task.
 
@@ -16,25 +16,24 @@ Specify the description of the task.
 
 <Tabs>
   <TabItem value="examples" label="Examples" defaultValue>
-
-Specify the list of test cases
-
--
--
--
-
-</TabItem>
+      Specify the list of test cases
+  </TabItem
+  
 <TabItem value="notes" label="Notes" >
     Specify additional information for the task (if any)
 </TabItem>
-<TabItem value="solution" label="Try" >
 
-<LiveCode code={`
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
 const topKFrequent = (nums, k) => {
  // Your code goes here
 };
-`} />
+`}
+  />
 </TabItem>
 
+<TabItem value="solution" label="Solution" >
+  // specify your solution
+</TabItem>
 </Tabs>
-

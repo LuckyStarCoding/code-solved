@@ -1,0 +1,94 @@
+---
+slug: blog/2025/master-the-two-pointers-pattern-solving-two-sum
+title: Master the Two Pointers Pattern Solving Two Sum II
+authors: [luckystar]
+tags: [jstask, 2026]
+date: 2026-01-23
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
+
+# Master the Two Pointers Pattern: Solving Two Sum II
+
+The **Two Pointers** technique is one of the most efficient ways to search for pairs in a sorted dataset. Instead of a nested loop that results in O(n^2) time complexity, this approach allows us to find the answer in a single pass—O(n).
+
+## The Challenge: Two Sum II (Sorted Input)
+
+Given an array of integers `numbers` that is already **sorted in non-decreasing order**, find two numbers such that they add up to a specific `target` number.
+
+### Constraints:
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** (1) (Constant space)
+- **Output:** The result should be **1-indexed** (e.g., the first element is at index 1).
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" default>
+
+| Input (`numbers`, `target`) | Expected Output | Reasoning                         |
+| :-------------------------- | :-------------- | :-------------------------------- |
+| `[2, 7, 11, 15]`, `9`       | `[1, 2]`        | 2 + 7 = 9. Indices are 1 and 2.   |
+| `[2, 3, 4]`, `6`            | `[1, 3]`        | 2 + 4 = 6. Indices are 1 and 3.   |
+| `[-1, 0]`, `-1`             | `[1, 2]`        | -1 + 0 = -1. Indices are 1 and 2. |
+
+  </TabItem>
+
+  <TabItem value="notes" label="Notes">
+
+      ### The Visual Logic
+
+      Instead of checking every possible pair, we place one pointer at the **start** and one at the **end**.
+
+      - **Sum < Target:** Move the `start` pointer right (`s++`).
+      - **Sum > Target:** Move the `end` pointer left (`e--`).
+
+  </TabItem>
+
+  <TabItem value="try" label="Try">
+      <LiveCode code={`
+const twoSum = (numbers, target) => {
+  // Your code goes here
+};
+
+twoSum([2, 7, 11, 15], 9)
+      `} />
+  </TabItem>
+
+  <TabItem value="solution" label="Solution">
+  ```javascript
+
+/**
+ * Two Sum II - Input Array Is Sorted
+ * Pattern: Two Pointers
+ */
+let find = (arr, t) => {
+    // SECURITY/ROBUSTNESS: Handle edge cases where input is not an array or too short
+    if (!Array.isArray(arr) || arr.length < 2) return [];
+
+    let s = 0;             // Start pointer
+    let e = arr.length - 1; // End pointer
+
+    // Condition s < e ensures we don't use the same element twice
+    while (s < e) {
+        let a = arr[s] + arr[e]; // Current sum
+
+        if (a === t) {
+            return [s + 1, e + 1]; // Return 1-based indices
+        } else if (a > t) {
+            e -= 1; // Sum too large, move the right pointer left to decrease it
+        } else {
+            s += 1; // Sum too small, move the left pointer right to increase it
+        }
+    }
+
+    // Explicitly return something if no pair is found (good practice)
+    return [-1, -1]; 
+}
+
+```
+</TabItem>
+</Tabs>

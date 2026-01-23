@@ -1,0 +1,176 @@
+---
+slug: blog/2025/advanced-two-pointers-cracking-the-3sum-challenge
+title: Advanced Two Pointers-Cracking the 3Sum Challenge
+authors: [luckystar]
+tags: [jstask, 2026, Two Pointers]
+date: 2026-01-24
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
+
+# The Challenge: 3Sum
+
+Given an integer array `nums`, return all unique triplets `[nums[i], nums[j], nums[k]]` such that their sum is exactly zero (0).
+
+<!-- truncate -->
+
+<Tabs>
+  <TabItem value="examples" label="Examples" defaultValue>
+| Input (`nums`) | Expected Output | Reasoning |
+| :--- | :--- | :--- |
+| `[-1, 0, 1, 2, -1, -4]` | `[[-1, -1, 2], [-1, 0, 1]]` | Distinct triplets that sum to 0. |
+| `[0, 1, 1]` | `[]` | No combination sums to 0. |
+| `[0, 0, 0]` | `[[0, 0, 0]]` | Only one unique triplet exists. |
+  </TabItem>
+  
+<TabItem value="notes" label="Notes" >
+
+## Understanding the "Boss Level": 3Sum Logic
+
+This is the **"Boss Level"** of the Two Pointers technique. If you understand *Two Sum II*, you already have 80% of the logic needed for **3Sum**. The secret? The trick is to **fix one number** and then use the Two Pointers technique to find the other two.
+
+### The Task: 3Sum
+Given an integer array `nums`, return all unique triplets `[nums[i], nums[j], nums[k]]` such that:
+1.  `i != j`, `i != k`, and `j != k` (No using the same element twice).
+2.  `nums[i] + nums[j] + nums[k] === 0`.
+
+> **The Catch:** The solution set must not contain **duplicate** triplets. For example, if you find `[-1, 0, 1]`, you cannot include `[0, -1, 1]` later in your results.
+
+---
+
+### Strategy: "Fix and Scan"
+
+* **Sort the array first:** This is mandatory for the Two Pointers pattern to work and helps in skipping duplicates.
+* **Iterate through the array:** Use a `for` loop with index `i`. This is your **"fixed" number**.
+* **Two Pointers:** For every `i`, set `left = i + 1` and `right = nums.length - 1`.
+* **Target Calculation:** Now you are just looking for two numbers that add up to the **negative** of your fixed number (i.e., `nums[left] + nums[right] === -nums[i]`).
+
+:::tip The "Fixed Pointer" Loop
+
+We loop through the array, treating the current element as our **Fixed Number** (A). We are now searching for two other numbers (B and C) such that:
+
+A + B + C = 0
+
+Or, more simply, we look for a pair that satisfies:
+
+B + C = -A
+:::
+
+### Step 3: Walking through the Logic
+
+Let's trace the first few iterations using a sorted array: `[-4, -1, -1, 0, 1, 2]`
+
+#### Iteration 1: Fixed A = -4 (at index 0)
+* **Goal:** We need B + C = 4 (to get -4 + 4 = 0).
+* **Left pointer (B):** Starts at `-1` (index 1).
+* **Right pointer (C):** Starts at `2` (index 5).
+* **Sum:** -1 + 2 = 1. This is **too small** (1 < 4), so we move the **Left pointer** forward.
+* **Result:** Eventually, the pointers meet. No pair in this range sums to 4.
+
+#### Iteration 2: Fixed A = -1 (at index 1)
+* **Goal:** We need B + C = 1 (to get -1 + 1 = 0).
+* **Left (B):** Is at `-1` (index 2).
+* **Right (C):** Is at `2` (index 5).
+* **Sum:** -1 + 2 = 1. **Match!** We found the triplet: `[-1, -1, 2]`.
+* **Action:** We move both pointers to continue looking for more pairs for this specific A.
+
+#### Iteration 3: Fixed A = -1 (at index 2)
+* **STOP!** This A is the same as the previous A.
+* **The Problem:** If we process it, we will just find the exact same triplets again.
+* **The Logic:** `if (nums[i] === nums[i-1]) continue;`
+
+
+---
+
+### 🛡️ Security & Performance Warning: The "Duplicate Trap"
+
+In JavaScript, arrays often contain repeating numbers (e.g., `[-1, -1, -1, 0, 1, 1]`).
+
+* **The Risk:** If you don't skip duplicates, your code will produce the same triplet multiple times. In a production environment, this wastes memory and can lead to bugs in data processing. In an interview, it's an automatic red flag.
+* **The Fix:** After finding a match and moving your pointers, use `while` loops to skip over identical values:
+
+```javascript
+// Skip duplicate values to ensure unique triplets
+while (nums[left] === nums[left + 1]) left++;
+while (nums[right] === nums[right - 1]) right--;
+```
+</TabItem>
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+const topKFrequent = (nums, k) => {
+ // Your code goes here
+};
+`}
+  />
+</TabItem>
+
+<TabItem value="solution" label="Solution" >
+
+```javascript
+/**
+ * 3Sum Algorithm - Optimal O(n^2) Approach
+ * Pattern: Fixed Pointer + Two Pointers
+ */
+let findSum = (arr) => {
+    // SECURITY: Always protect against null/undefined inputs to prevent crashes
+    if (!arr) return [];
+
+    // 1. Sort numerically. Critical for Two Pointers to work.
+    arr.sort((a, b) => a - b);
+    
+    let res = [];
+
+    // 2. The Anchor Loop: We stop at length - 2 to leave room for the pointers.
+    for (let i = 0; i < arr.length - 2; i++) {
+        let curr = arr[i];
+
+        // OPTIMIZATION: If anchor is > 0, three positive numbers can't sum to 0.
+        if (curr > 0) break;
+
+        // SKIP DUPLICATE ANCHORS: Prevents starting a search we've already done.
+        if (i > 0 && curr === arr[i - 1]) continue;
+
+        let s = i + 1;
+        let e = arr.length - 1;
+
+        while (s < e) {
+            let sum = arr[s] + arr[e] + curr;
+
+            if (sum === 0) {
+                // FOUND A TRIPLET
+                res.push([curr, arr[s], arr[e]]);
+
+                // SKIP DUPLICATE POINTERS: 
+                // This ensures we only find UNIQUE pairs for this anchor.
+                
+                while (s < e && arr[s] === arr[s + 1]) s++;
+                while (s < e && arr[e] === arr[e - 1]) e--;
+
+                // Move both pointers after skipping duplicates
+                s++;
+                e--;
+            } else if (sum < 0) {
+                // Sum is too small, we need a larger value from the left
+                s++;
+            } else {
+                // Sum is too large, we need a smaller value from the right
+                e--;
+            }
+        }
+    }
+    return res;
+};
+
+// Execution Test
+findSum([-4, -1, -1, 0, 1, 2]); // Output: [[-4, 2, 2] is not here, it finds [-1,-1,2] and [-1,0,1]]
+
+```
+
+</TabItem>
+
+
+</Tabs>
