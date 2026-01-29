@@ -11,6 +11,8 @@ import TabItem from "@theme/TabItem";
 
 In statistics a stem-and-leaf plot is a graphical representation of values distribution in a dataset, usually implemented for a small set of values. In this exercise we'll build a simple plot for positive integer values following the steps below.
 
+<!-- truncate -->
+
 1. You must separate each value in two parts: the stem, equal to all number digits but last and the leaf, equal to the last digit. For numbers in range 0-9 you must add a "0" at the start. Examples:
 
    * 4872: stem is "487", leaf is "2".
@@ -23,8 +25,6 @@ In statistics a stem-and-leaf plot is a graphical representation of values distr
    * Leaves for stem 1 are 1, 1 and 3 (every leaf in ascending order), leaves for stem 2 are 2 and 2.
 
 Given an array of positive integers you must return the stem-and-leaf plot as an array of strings, one for each stem: strings have to be formatted with stem and leaves separated by " I " (spaces included) and leaves in ascending order separated by a space between them.
-
-<!-- truncate -->
 
 <Tabs>
   <TabItem value="examples" label="Examples" defaultValue>

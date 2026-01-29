@@ -10,30 +10,57 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import LiveCode from "@site/src/components/LiveCode";
 
-Specify the description of the task.
+**Complexity:** 🚀 `Time: O(n)` | 💾 `Space: O(1)`
+
+Explain the "Hook" here: Why is this problem important? What pattern does it teach? (e.g., "This task is the perfect introduction to the Two Pointers technique.")
+
+## 📝 Task Description
+Specify the clear, concise description of the task here.
 
 <!-- truncate -->
 
 <Tabs>
-  <TabItem value="examples" label="Examples" defaultValue>
-      Specify the list of test cases
-  </TabItem
-  
-<TabItem value="notes" label="Notes" >
-    Specify additional information for the task (if any)
-</TabItem>
+  <TabItem value="examples" label="Examples" default>
+    | Input | Output | Explanation |
+    | :--- | :--- | :--- |
+    | `nums = [1,2], t = 3` | `[1, 2]` | Description of why... |
+  </TabItem>
 
-<TabItem value="try" label="Try">
-  <LiveCode
-    code={`
-const topKFrequent = (nums, k) => {
- // Your code goes here
+  <TabItem value="approach" label="Approach">
+    ### 💡 The Strategy
+    1. **Step 1:** Explain the setup (e.g., "Initialize two pointers").
+    2. **Step 2:** Explain the logic loop.
+    3. **Step 3:** Explain the exit condition.
+
+    > **Mentor Tip:** Always look for the 'sorted' keyword; it's your clue to use this pattern.
+  </TabItem>
+
+  <TabItem value="try" label="Try">
+    <LiveCode
+      code={`// Write your solution here
+const solve = (nums) => {
+  
 };
 `}
-  />
-</TabItem>
+    />
+  </TabItem>
 
-<TabItem value="solution" label="Solution" >
-  // specify your solution
-</TabItem>
+  <TabItem value="solution" label="Solution">
+    ```javascript
+    /**
+     * @param {number[]} nums
+     * @return {number}
+     */
+    const solve = (nums) => {
+      // Implementation logic
+    };
+    ```
+  </TabItem>
+
+  <TabItem value="notes" label="Notes & Security">
+    ### 🛡️ Guardrails
+    - **Empty Input:** Ensure `nums.length > 0`.
+    - **Large Numbers:** Mention potential for integer overflow in JS if applicable.
+    - **Duplicates:** How does the algorithm handle repeated values?
+  </TabItem>
 </Tabs>

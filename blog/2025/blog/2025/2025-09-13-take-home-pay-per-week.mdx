@@ -8,51 +8,88 @@ date: 2025-09-12
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
-# Weekly Salary
+**Complexity:** 🚀 Time: O(1) | 💾 Space: O(1)
 
-<span style={{ fontSize: "1.25em" }}>
-Write a function that takes a list of hours and returns the total weekly salary.
-The input list hours is listed sequentially, ordered from Monday to Sunday.
-A worker earns $10 an hour for the first 8 hours.
-For every overtime hour, he earns $15.
-On weekends, the employer pays double the usual rate, regardless how many hours were worked previously that week. For instance, 10 hours worked on a weekday would pay 80+30 = $110, but on a weekend it would pay 160+60 = $220.
+This solution demonstrates a functional approach by breaking down payroll rules into modular helper functions. This makes the logic easy to test and verify for each specific pay scenario.
 
-</span>
+## 📝 Task Description
+Write a function that takes a list of hours (Monday to Sunday) and returns the total weekly salary based on these rules:
+- **Standard Rate:** 10 per hour for the first 8 hours.
+- **Overtime Rate:** 15 per hour for hours beyond 8.
+- **Weekends:** Employer pays double the usual rate for all hours.
 
 <!-- truncate -->
+
 <Tabs>
-  <TabItem value="examples" label="Examples" defaultValue>
-* weeklySalary([8, 8, 8, 8, 8, 0, 0]) ➞ 40
-* weeklySalary([10, 10, 10, 0, 8, 0, 0]) ➞ 410
-* weeklySalary([0, 0, 0, 0, 0, 12, 0]) ➞ 280
+  <TabItem value="examples" label="Examples" default>
+    | Input (Mon - Sun) | Output | Reasoning |
+    | :--- | :--- | :--- |
+    | `[8, 8, 8, 8, 8, 0, 0]` | `400` | 5 days * 80 = 400 |
+    | `[10, 10, 10, 0, 8, 0, 0]` | `410` | (3 * 110) + 80 = 410 |
+    | `[0, 0, 0, 0, 0, 12, 0]` | `280` | Weekend: (8*10*2) + (4*15*2) = 280 |
+  </TabItem>
+
+  <TabItem value="approach" label="Approach">
+    ### 💡 The Functional Logic
+    This approach uses four distinct mathematical helpers:
+    1. **sn:** Weekday Base (Hours * 10)
+    2. **so:** Weekday Overtime (First 8 hours at 80 + remaining hours at 15)
+    3. **wn:** Weekend Base (Double the normal rate)
+    4. **wo:** Weekend Overtime (Double the weekday overtime rate)
+
     
-</TabItem>
 
-  <TabItem value="notes" label="Notes" >
-    Every element in the array is greater than or equal to 0.
-    </TabItem>
-  <TabItem value="solution" label="Solution" >
+    > **Mentor Tip:** Defining your rules as small functions (`sn`, `so`, etc.) is a pattern often seen in "Declarative Programming." It makes the core loop very easy to read because it looks like a simple decision tree.
+  </TabItem>
 
-```jsx
-function weeklySalary(h) {
-  let c = [];
-  let sn = (t) => t * 10;
-  let so = (t) => (t - 8) * 15 + 80;
-  let wn = (t) => t * 10 * 2;
-  let wo = (t) => (t - 8) * 15 * 2 + 160;
-  for (let i = 0; i < h.length; i++) {
-    if (i <= 4) {
-      h[i] <= 8 ? c.push(sn(h[i])) : c.push(so(h[i]));
-    } else if (i > 4) {
-      h[i] <= 8 ? c.push(wn(h[i])) : c.push(wo(h[i]));
+  <TabItem value="try" label="Try">
+    <LiveCode
+      code={`function weeklySalary(h) {
+  // Define your sn, so, wn, wo rules here
+  // Loop through h (length 7)
+  // Indices 0-4 are weekdays, 5-6 are weekends
+};
+
+console.log(weeklySalary([8, 8, 8, 8, 8, 0, 0])); // 400
+`}
+    />
+  </TabItem>
+
+  <TabItem value="solution" label="Solution">
+    ```javascript
+    function weeklySalary(h) {
+      let total = 0;
+
+      // Define calculation rules as helper functions
+      let sn = (t) => t * 10;                  // Standard Normal: $10/hr
+      let so = (t) => (t - 8) * 15 + 80;       // Standard Overtime: $15/hr after 8hrs ($80)
+      let wn = (t) => t * 10 * 2;              // Weekend Normal: Double rate ($20/hr)
+      let wo = (t) => (t - 8) * 15 * 2 + 160;  // Weekend Overtime: Double overtime rate
+
+      for (let i = 0; i < h.length; i++) {
+        // Mon (0) to Fri (4) are Weekdays
+        if (i <= 4) {
+          total += h[i] <= 8 ? sn(h[i]) : so(h[i]);
+        } 
+        // Sat (5) and Sun (6) are Weekends
+        else {
+          total += h[i] <= 8 ? wn(h[i]) : wo(h[i]);
+        }
+      }
+      
+      return total;
     }
-  }
-  return c.reduce((a, b) => a + b);
-}
-```
-    </TabItem>
-</Tabs>
+    ```
+  </TabItem>
 
+  <TabItem value="notes" label="Notes & Security">
+    ### 🛡️ Guardrails
+    - **Memory Efficiency:** By using a `total` accumulator instead of an intermediate array, we keep the space complexity at O(1).
+    - **Logic Boundaries:** Using `i <= 4` strictly targets the first 5 elements. Always ensure your input array represents a full 7-day week to prevent logic errors.
+    - **Security Hint:** In financial applications, floating-point math can lead to "penny errors." Since these are whole numbers, it's safe, but always be cautious if rates include decimals.
+  </TabItem>
+</Tabs>
 
 

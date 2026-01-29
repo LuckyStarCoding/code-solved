@@ -6,41 +6,77 @@ tags: [jstask]
 date: 2025-09-12
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
+
 # Power Ranger
 
-<span style={{ fontSize: "1.25em" }}>
-  Create a function that takes in n, a, b and returns the number of positive
-  values raised to the nth power that lie in the range [a, b], inclusive.
-</span>
+**Complexity:** 🚀 Time: O(1) | 💾 Space: O(1)
+
+This task challenges your ability to think mathematically rather than just brute-forcing a range. Instead of checking every number between a and b, we can jump straight to the answer using roots.
+
+## 📝 Task Description
+Create a function that takes in n, a, b and returns the number of positive values raised to the nth power that lie in the range [a, b], inclusive.
 
 <!-- truncate -->
 
-### **Examples**
+<Tabs>
+  <TabItem value="examples" label="Examples" default>
+    | Input (n, a, b) | Output | Reasoning |
+    | :--- | :--- | :--- |
+    | `2, 49, 65` | `2` | 7^2=49 and 8^2=64 |
+    | `3, 1, 27` | `3` | 1^3, 2^3, 3^3 are in range |
+    | `10, 1, 5` | `1` | Only 1^10 fits |
+    | `5, 31, 33` | `1` | 2^5 = 32 fits |
+  </TabItem>
 
-```js
-powerRanger(2, 49, 65) ➞ 2
-// 2 squares (n^2) lie between 49 and 65, 49 (7^2) and 64 (8^2)
-powerRanger(3, 1, 27) ➞ 3
-// 3 cubes (n^3) lie between 1 and 27, 1 (1^3), 8 (2^3) and 27 (3^3)
-powerRanger(10, 1, 5) ➞ 1
-// 1 value raised to the 10th power lies between 1 and 5, 1 (1^10)
-powerRanger(5, 31, 33) ➞ 1
-powerRanger(4, 250, 1300) ➞ 3
-```
+  <TabItem value="approach" label="Approach">
+    ### 💡 The Mathematical Strategy
+    Instead of iterating from a to b, find the **range of roots**:
+    1. Find the nth root of a. Round it **up** to the nearest integer (this is our starting base).
+    2. Find the nth root of b. Round it **down** to the nearest integer (this is our ending base).
+    3. The answer is the count of integers between these two values: `floor(rootB) - ceil(rootA) + 1`.
 
-### **Notes**
+    
+    
+    > **Mentor Tip:** Always try to solve range problems by calculating the boundaries. If you can solve a problem with math O(1) instead of a loop O(n), you save CPU cycles and prevent potential browser timeouts.
+  </TabItem>
 
-Remember that the range is inclusive.
-a < b will always be true.
+  <TabItem value="try" label="Try">
+    <LiveCode
+      code={`const powerRanger = (n, a, b) => {
+  // Try the O(1) math approach here!
+};
 
-### **Solution**
+console.log(powerRanger(2, 49, 65)); // Expected: 2
+`}
+    />
+  </TabItem>
 
-```js
-function powerRanger(p, min, max) {
-  let c = 0;
-  for (let i = min; i <= max; i++) {
-    Number.isInteger(Math.pow(i, 1 / p)) ? (c += 1) : c;
-  }
-  return c;
-}
-```
+  <TabItem value="solution" label="Solution">
+    ```javascript
+    /**
+     * Optimized Math Approach
+     * Time: O(1) - significantly faster than looping
+     */
+    function powerRanger(n, a, b) {
+      // Find the first integer whose n-th power is >= a
+      const start = Math.ceil(Math.pow(a, 1 / n));
+      
+      // Find the last integer whose n-th power is <= b
+      const end = Math.floor(Math.pow(b, 1 / n));
+      
+      // If start > end, no such powers exist
+      return start <= end ? end - start + 1 : 0;
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="notes" label="Notes & Security">
+    ### 🛡️ Guardrails
+    - **Floating Point Precision:** JS numbers are floats. For very high powers, `Math.pow(x, 1/n)` might have precision errors. In production, consider adding a small epsilon (e.g., 1e-9) before rounding.
+    - **Inclusivity:** We use `Math.ceil` for the lower bound and `Math.floor` for the upper bound to satisfy the "inclusive" requirement.
+    - **Performance:** The loop approach O(n) is a **security risk** (Denial of Service) if b - a is a massive number (e.g., 2 billion), as it will block the Event Loop.
+  </TabItem>
+</Tabs>
