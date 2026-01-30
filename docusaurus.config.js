@@ -9,8 +9,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /*@type {import('@docusaurus/types').Config} */
 const path = require('path');
 const config = {
-title: 'Code Solved', // Updated for your project
-tagline: 'LeetCode Solutions & Tech Insights',
+title: 'Code Solved', 
+tagline: 'Algorithms in Slow-Mo: Seeing the Logic Before the Code',
 favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -18,23 +18,23 @@ url: 'https://LuckyStarCoding.github.io',
 baseUrl: '/code-solved/',
 
   // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'LuckyStarCoding', // Usually your GitHub org/user name.
-  projectName: 'code-solved', // Usually your repo name.
+
+  organizationName: 'LuckyStarCoding', 
+  projectName: 'code-solved', 
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
   
-
   presets: [
     [
       'classic',
@@ -77,7 +77,7 @@ baseUrl: '/code-solved/',
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'algoSidebar',
             position: 'left',
             label: 'Tutorial',
           },
@@ -156,7 +156,4 @@ baseUrl: '/code-solved/',
     ],
 
   };
-
-
-
 export default config;
