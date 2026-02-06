@@ -1,5 +1,4 @@
 ---
-id: two-pointers
 title: "Phase 1: Two Pointers Technique"
 sidebar_label: "Two Pointers"
 description: "Mastering the converging and fast/slow pointer strategies for array optimization."
@@ -34,6 +33,18 @@ For the converging Two Pointers pattern to work on a "Target Sum" problem, **the
 
 Without sorting, moving a pointer does not provide a predictable change in the result, and the logic breaks.
 
+:::tip
+
+Imagine you are trying to find two numbers in a sorted list that add up to 20. Instead of picking the first number and checking it against every other number one by one (which takes forever), you put one finger at the very beginning (the smallest number) and one finger at the very end (the largest number).
+
+* If your sum is too high: You move your "large" finger one step to the left to pick a smaller number.
+
+* If your sum is too low: You move your "small" finger one step to the right to pick a larger number.
+
+Two Pointer is a strategy for sorted data where you use two markers to 'pinch' the search space from both ends. It turns a slow, repetitive search into a single, synchronized movement toward the center, saving massive amounts of time and memory.
+
+:::
+
 ---
 
 ## Example: The Target Sum Problem
@@ -62,17 +73,5 @@ In many languages (like C++, Java, or Go), integers have a fixed maximum value (
 * **The Fix:** Use a larger type (e.g., `int64` or `long`) for the sum calculation, or perform a check before addition.
 
 
-
 ### 2. The Infinite Loop (Denial of Service)
 While Two Pointers is generally safe, your loop condition must strictly use `left < right`. If the logic within the loop fails to move at least one pointer in every possible branch, the process can hang, consuming 100% of the CPU and causing a **Denial of Service (DoS)**.
-
----
-
-## Mastery Task
-
-**Problem:** Given a sorted array, find the two indices such that the values add up to the target.
-
-**Constraints:** * You may not use the same element twice.
-* Solution must be **O(n)** time and **O(1)** space.
-
-**Task:** Implement the solution and write a 2-sentence explanation of why this is more secure than a Hash Map approach in memory-constrained environments.

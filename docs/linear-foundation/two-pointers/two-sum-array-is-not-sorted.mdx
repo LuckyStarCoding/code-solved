@@ -1,13 +1,11 @@
 ---
-slug: blog/2025/two-sum-array-is-not-sorted
-title: Two Sum (array is not sorted)
-authors: [luckystar]
-tags: [jstask, 2025, Array, Map]
-date: 2025-12-04
+title: Two Sum - Input Array is not Sorted
+tags: [Array, Map]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
@@ -48,6 +46,17 @@ The most efficient solution is to use a **Hash Map** (or JavaScript `Map` object
     * If **yes**, the solution is found: return the index stored with the `complement` and the current index `i`.
     * If **no**, store the current number `n` as the key and its index `i` as the value: `Map.set(n, i)`.
 </TabItem>
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+let twoSum = (arr) => {
+ // Your code goes here
+};
+`}
+  />
+</TabItem>
+
 <TabItem value="solution" label="Solution" >
 ```jsx 
 /**

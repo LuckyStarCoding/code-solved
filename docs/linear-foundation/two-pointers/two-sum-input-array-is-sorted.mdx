@@ -1,13 +1,11 @@
 ---
-slug: blog/2025/two-sum-input-array-is-sorted
 title: Two Sum - Input Array Is Sorted
-authors: [luckystar]
-tags: [jstask, 2025, Arrays, Two-Pointer]
-date: 2025-11-25
+tags: [Arrays, Two-Pointer]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
 Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number. Let these two numbers be numbers[index1] and numbers[index2] where `1 <= index1 < index2 <= numbers.length`.
 
@@ -37,9 +35,17 @@ The tests are generated such that there is exactly one solution. You may not use
 * **Output:** `[1, 2]`
 * **Explanation:** The sum of `-1` (at index 1) and `0` (at index 2) is -1. We return the **1-indexed** array `[1, 2]`.
 </TabItem>
-<TabItem value="notes" label="Notes" >
-Since the array is **sorted**, the most efficient and space-compliant solution is the **Two-Pointer technique**.
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+let twoSum = (arr) => {
+ // Your code goes here
+};
+`}
+  />
 </TabItem>
+
 <TabItem value="solution" label="Solution" defaultValue>
 ```jsx 
 let twoSum = function(nums, tg) {

@@ -1,0 +1,55 @@
+---
+title: "The Prefix Sum Pattern: Pre-computation Strategy"
+sidebar_label: "Intro"
+description: "Learning the technique for O(1) range sum queries and cumulative data analysis."
+---
+
+The Prefix Sum algorithm is a "Space-Time Tradeoff." It is used when you have a static list of numbers and need to perform multiple **range queries** (calculating the sum of a specific section) instantly. Instead of recalculating the sum every time, we pre-calculate a "Measuring Tape" of running totals.
+
+## The Structural Intuition: "The Measuring Tape"
+
+Imagine you are walking down a path. Instead of remembering the distance between each individual milestone, you record your **total distance from the start** at every stone you pass.
+
+To find the distance between Milestone A and Milestone B, you simply subtract the total distance at A from the total distance at B.
+
+
+---
+
+## When to Use It
+* **Financial Auditing:** Calculating total revenue between two specific dates.
+* **Performance Monitoring:** Checking server error spikes over a sliding time window.
+* **Image Processing:** Calculating the average brightness of a specific region in a photo.
+
+---
+
+## Example: The Secure Access Logger
+Use the Prefix Sum technique to analyze a server's security health. You are given a log of failed login attempts and must determine the total number of threats within a specific time window without re-scanning the entire array.
+
+### The Implementation (Pre-computation)
+We create a `sum` array of size `n + 1`. We fill the first index with `0` to handle ranges that start at the very beginning of the log.
+
+```javascript
+/**
+ * Efficiently calculates the sum of elements within a range [l, r].
+ * Optimized for high-frequency queries.
+ */
+let checkLog = (arr, l, r) => {
+  const n = arr.length;
+  
+  // 1. Create array of size n + 1 and fill with 0.
+  // The leading 0 is our 'starting line' for the measuring tape.
+  let prefixSum = new Array(n + 1).fill(0);
+
+  // 2. Build the "Measuring Tape" (O(n) time complexity)
+  for (let i = 0; i < n; i++) {
+      // Current total = This hour's value + everything before it
+      prefixSum[i + 1] = arr[i] + prefixSum[i];
+  } 
+
+  // 3. The O(1) Formula: Range [l, r] = P[r + 1] - P[l]
+  // To get Hour 2 to 4 (values: 2, 15, 4), we do: prefixSum[5] - prefixSum[2]
+  return prefixSum[r + 1] - prefixSum[l];
+}
+
+// Result: 2 + 15 + 4 = 21
+console.log(checkLog([3, 8, 2, 15, 4, 10], 2, 4)); // Output: 21

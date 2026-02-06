@@ -1,13 +1,12 @@
 ---
-slug: blog/2025/boats-to-save-people
 title: Boats to Save People
 authors: [luckystar]
-tags: [jstask, 2025, Arrays, Two-Pointer]
-date: 2025-11-24
+tags: [Arrays, Two-Pointer]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
 You are given an array people where people[i] is the weight of the ith person, and an infinite number of boats where each boat can carry a maximum weight of limit. Each boat carries at most two people at the same time, provided the sum of the weight of those people is at most limit.
 
@@ -15,6 +14,7 @@ You are given an array people where people[i] is the weight of the ith person, a
 
 <Tabs>
   <TabItem value="examples" label="Examples" defaultValue>
+#### Example 1
 
 * **Input:** `people = [1, 2]`, `limit = 3`
 * **Output:** `1`
@@ -83,11 +83,20 @@ If `people[left] + people[right] > limit`:
 3.  Increment the `boats` counter.
 4.  Move the **`right` pointer one step to the left** (`right--`), as the heaviest person is now seated.
 5.  The **`left` pointer does not move**, as the lightest person is still waiting for a boat.
-
-
-
-
 </TabItem>
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+let numBoats = (arr, lim) => {
+ // Your code goes here
+};
+numBoats([3, 5, 3, 4], 5)
+
+`}
+  />
+</TabItem>
+
 <TabItem value="solution" label="Solution" >
 ```jsx 
 function boats(p, lim) {

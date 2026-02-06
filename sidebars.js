@@ -18,28 +18,70 @@ const sidebars = {
 
   // But you can create a sidebar manually
 
-  algoSidebar: [
+algoSidebar: [
     {
       type: 'doc',
       id: 'intro', // Ensure you have an intro.md in /docs
       label: '🚀 Start Here',
     },
  {
+  type: 'category',
+  label: 'Linear Foundation',
+  collapsed: false,
+  // This makes clicking "Linear Foundation" open an index page
+  link: { type: 'generated-index' }, 
+  items: [
+    {
       type: 'category',
-      label: 'Phase 1. Linear Foundation',
-      collapsed: false,
+      label: 'Two Pointers',
+      link: {
+        type: 'doc',
+        id: 'linear-foundation/two-pointers/intro',
+      },
       items: [
-        'Phase 1. Linear Foundation/sliding-window',
-        'Phase 1. Linear Foundation/two-pointers',
-        'Phase 1. Linear Foundation/prefix-sum',
+        'linear-foundation/two-pointers/trapping-rain-water',
+        'linear-foundation/two-pointers/cracking-the-3sum-challenge',
+        'linear-foundation/two-pointers/two-sum-input-array-is-sorted',
+        'linear-foundation/two-pointers/two-sum-array-is-not-sorted',
+        'linear-foundation/two-pointers/two-sum-array-is-not-sorted',
+        'linear-foundation/two-pointers/valid-palindrome-with-one-deletion',
+        'linear-foundation/two-pointers/boats-to-save-people',
+        'linear-foundation/two-pointers/di-string-match',
       ],
     },
+    {
+      type: 'category',
+      label: 'Sliding Window',
+      link: {
+        type: 'doc',
+        id: 'linear-foundation/sliding-window/intro',
+      },
+      items: [
+        // 'linear-foundation/prefix-sum/pii-audit-prefix-sums-in-strings',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Prefix Sum',
+      // Clicking the "Prefix Sum" folder will now open the intro file.
+      link: {
+        type: 'doc',
+        id: 'linear-foundation/prefix-sum/intro',
+      },
+      items: [
+        // We don't need to list 'intro' here again if it's the category link, 
+        // but you can if you want it visible in the list too.
+        'linear-foundation/prefix-sum/pii-audit-prefix-sums-in-strings',
+      ],
+    },
+  ],
+},
     {
       type: 'category',
       label: 'Phase 2. Logic of Organization',
       collapsed: true,
       items: [
-        'Phase 2. Logic of Organization/binary-search', // Note: Matching your error log (missing 'n' at end)
+        'Phase 2. Logic of Organization/binary-search', 
         'Phase 2. Logic of Organization/recursion-backtracking',
         'Phase 2. Logic of Organization/sorting',
       ],

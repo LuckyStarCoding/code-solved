@@ -1,13 +1,11 @@
 ---
-slug: blog/2025/valid-palindrome-with-one-deletion
 title: Valid Palindrome with One Deletion
-authors: [luckystar]
-tags: [jstask, 2025, Arrays, Two Poiner]
-date: 2025-12-15
+tags: [Arrays, Two Poiner]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from '@site/src/components/LiveCode';
 
 Given a non-empty string s, you may delete **at most one character**. Determine if you can make the resulting string a palindrome.
 A palindrome is a sequence that reads the same backward as forward (e.g., "racecar", "madam").
@@ -33,16 +31,16 @@ These cases test whether the algorithm correctly checks **both** deletion possib
 | :--- | :---: | :--- |
 | `"deede"` | `true` | Mismatch at the last two characters (`d` vs `e`). Delete the last `'e'` to get `"deed"`. |
 | `"eedee"` | `true` | Mismatch at the first two characters (`e` vs `e`). Delete the first `'e'` to get `"edee"`. |
-| `"raceacar"` | `true` | Mismatch is between $e$ and $a$. Deleting $e$ leaves `"racacar"`. |
+| `"raceacar"` | `true` | Mismatch is between e and a. Deleting e leaves `"racacar"`. |
 | `"cupuoc"` | `true` | Mismatch at `'u'` (L=1) and `'o'` (R=4). Deleting `'o'` leaves `"cupuc"`. |
-| `"axxcxa"` | `false` | Mismatch is $x$ vs $c$. Deleting $x$ leaves `"axcxa"` (Fail). Deleting $c$ leaves `"axxaa"` (Fail). |
+| `"axxcxa"` | `false` | Mismatch is x vs c. Deleting x leaves `"axcxa"` (Fail). Deleting c leaves `"axxaa"` (Fail). |
 
 ### 📏 Length Edge Cases
 
 | Input (`s`) | Expected Output | Notes |
 | :--- | :---: | :--- |
 | `"a"` | `true` | Single character is always a palindrome. |
-| `"ab"` | `true` | Delete `'a'` $\rightarrow$ `"b"`. |
+| `"ab"` | `true` | Delete `'a'` \rightarrow `"b"`. |
 | `"aba"` | `true` | Already a palindrome. |
 | `""` | `true` | Empty string (if constraints allow) is a palindrome. |
 
@@ -66,6 +64,25 @@ The solution must be O(N) time complexity, which dictates the use of the **Two P
 5.  **Final Return:** If the main `while` loop finishes without finding any mismatch, the original string was already a perfect palindrome. The function should return `true`.
 
 </TabItem>
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+let validPalindrome = (str) => {
+ // Your code goes here
+};
+
+// validPalindrome('racecar') // true - Perfect Symmetry: No deletions needed.
+// validPalindrome('aba')     // true - Minimal Case: Standard 3-character palindrome.
+// validPalindrome('abca')    // true - Single Deletion (Left): Skip 'b' to get 'aca'.
+// validPalindrome('tebbem')  // true - Single Deletion (Right): Skip 'm' to get 'tebbe'.
+// validPalindrome('cuppucu') // true - Ambiguous Mismatch: Must check both skip options at the center.
+// validPalindrome('abcde')   // false - Maximum Entropy: Too many unique chars to form a pair.
+validPalindrome('eeccccbebaee') // false - False Friend: Look-alike symmetry that fails after the first deletion.
+`}
+  />
+</TabItem>
+
 <TabItem value="solution" label="Solution" >
 ```jsx 
 /**
