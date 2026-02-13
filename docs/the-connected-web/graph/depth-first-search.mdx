@@ -1,0 +1,259 @@
+---
+title: "Deep Dive Algorithm (DFS)"
+description: "Mastering the Deep Dive algorithms."
+tags: [Stack]
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
+
+# DFS: The "Deep Dive" Algorithm
+
+If you’ve ever played a video game where you have to explore a dark cave, you’ve already used **DFS (Depth-First Search)** without knowing it.
+
+Imagine you reach a fork in a dark tunnel. You have two ways to handle this:
+
+🌊 The **"Ripple" (BFS)**
+You walk 5 feet into the left tunnel, then 5 feet into the right tunnel, constantly switching back and forth to stay "level." 
+
+🧗 The **"Explorer" (DFS)**
+You pick the left tunnel and you **keep going until you hit a dead end**. You only try the right tunnel once the left one is completely explored.
+
+---
+
+### Why Use DFS?
+
+* **Memory Efficient:** Unlike its sibling BFS, DFS doesn't need to remember every neighbor at every level—it just needs to remember the path it's currently on.
+* **Pathfinding:** It’s great for games or puzzles where you need to see if a solution exists at the end of a long chain of decisions.
+* **Complexity:** In most cases, the time complexity is O(V + E), where V is vertices and E is edges.
+
+### 🏆 The "Core Four" Most Frequent Cases
+
+DFS isn't just a textbook exercise; it powers some of the most common features in modern software. Here is where you'll see the "Explorer" in action:
+
+#### 1. Connectivity 🔌
+**The "Can I get there from here?" test.**
+
+This is the most common use case. When you have a massive web of data, you often just need to know if two points are linked at all.
+
+* **The Scenario:** In a social network, are you in the same "extended circle" as a specific celebrity?
+* **Why DFS:** You don't necessarily care about the *shortest* path (which might require a massive search); you just need a "Yes" or "No" as fast as possible by following a single lead to the end.
+
+
+
+---
+
+#### 2. Flood Fill 🎨
+**The "Paint Bucket Tool."**
+
+If you’ve ever used the "Paint Bucket" in Photoshop or MS Paint to fill an area with color, you were running a DFS.
+
+* **How it works:** It starts at one pixel, then "dives" into every neighbor of the same color. It keeps diving until it hits a border of a different color.
+* **Real-world use:** Identifying objects in satellite imagery (finding a forest vs. a city) or medical scans (like outlining a specific organ).
+
+
+
+---
+
+#### 3. All-Path Exploration ♟️
+**The "Decision Tree."**
+
+When you need to see every possible outcome of a series of choices, DFS is the standard approach. This is often called **Backtracking**.
+
+* **The Scenario:** A chess AI looking 5 moves ahead. It follows one move to the very end of that specific game path, evaluates if it wins or loses, then "backtracks" to try a different move.
+* **The Logic:** It explores one "reality" completely before moving to the next.
+
+
+
+---
+
+#### 4. Garbage Collection ♻️
+**Memory Management.**
+
+This is happening behind the scenes in languages like Java, Python, or JavaScript right now to keep your computer from crashing.
+
+* **The "Mark and Sweep":** The system runs a DFS starting from your "active" variables. It dives through every object they reference. 
+* **The Result:** Anything the DFS **cannot reach** is considered "garbage" (unreachable memory) and is deleted to save RAM.
+
+
+
+---
+
+
+### The Logic in Action
+
+1.  **Start** at the root (or any starting node).
+2.  **Dive** into an unvisited neighbor.
+3.  **Repeat** until you hit a leaf node (a dead end).
+4.  **Backtrack** to the last fork in the road and try the next path.
+
+> **Pro Tip:** DFS is typically implemented using a **Stack** (either explicitly or via recursion), while BFS uses a **Queue**.
+
+### 🧱 The 3 Pillars of DFS
+
+To turn this intuition into code, we use three rules that every "Explorer" must follow:
+
+#### 1. The "Border Guard" (Validation)
+Before you take a step, you check: **"Am I still on the map?"** If you try to step into index `-1` or index `10` on a 10 x 10 grid, your program will crash. The first thing your code does is check if the coordinates are legal and within the boundaries.
+
+#### 2. The "Digital Breadcrumb" (Memory)
+This is the most important part. Computers are forgetful! If you stand on a piece of land (`1`), you must immediately change it to water (`0`) or mark it in a "Visited" list.
+
+**Why?** If you don't, you'll step to your neighbor, and then your neighbor will look back, see you, and step back to your original spot. You'll be stuck bouncing between two squares forever in an **infinite loop**.
+
+#### 3. The "Recursive Call" (The Fork in the Road)
+Instead of a standard `for` loop, we often use **Recursion**. This means the function calls a copy of itself to handle the next step.
+
+1.  You stand at `(row, col)`.
+2.  You tell a **"Junior Explorer"** (a new function call) to handle the neighbor at `(row + 1, col)`.
+3.  **Everything in your current function pauses.** You wait for that Junior Explorer to finish their entire journey before you move to your next neighbor (like `row - 1` or `col + 1`).
+
+
+---
+
+### Comparison at a Glance
+
+| Feature | DFS (Depth-First) | BFS (Breadth-First) |
+| :--- | :--- | :--- |
+| **Analogy** | The Lone Explorer | The Growing Ripple |
+| **Data Structure** | Stack (or Recursion) | Queue |
+| **Best For** | Exploring every corner | Finding the shortest path |
+| **Search Style** | Dives deep into one branch first. | Explores level-by-level (ripples). |
+| **Data Structure** | **Stack** (or Recursion) | **Queue** |
+| **Memory (Space)** | Efficient for "Wide" trees. | Efficient for "Deep" trees. |
+| **Shortest Path?** | ❌ No (Finds *any* path). | ✅ Yes (Guaranteed shortest). |
+| **Common Use** | Games, Puzzles, All-Paths. | GPS, Networking, Level-order. |
+
+Ask yourself these two questions to decide:
+
+#### 1. Is the "Target" likely very deep? 
+* **Yes:** Use **DFS**. It will find it much faster than checking every single neighbor on every level first.
+* **No (It's near the start):** Use **BFS**. It will find it almost immediately.
+
+
+
+#### 2. Do I have limited memory?
+* **Yes:** Use **DFS**. It only needs to store the current path from the root to a leaf (O(height)).
+* **No:** You can use **BFS**, but be careful—it has to store *every* node at the current level (O(width)), which can be millions of nodes in a big graph.
+
+---
+
+### 🛠️ Use Case Matchmaker
+
+* **"Find the shortest distance between two cities."** → 🏃 **BFS**
+* **"Find if there is a cycle in this task list."** → 🧗 **DFS**
+* **"Find all possible moves in a game of Sudoku."** → 🧗 **DFS**
+* **"Find all people within 2 'handshakes' of me."** → 🏃 **BFS**
+
+
+
+---
+
+:::tip
+
+ If the problem mentions **"Shortest Path"** and all steps have the same cost, **BFS** is almost always the answer. If the problem mentions **"All Paths"** or **"Backtracking,"** reach for **DFS**.
+
+:::
+
+### 🏝️ Challenge: The Island Cartographer
+
+Your satellite has just beamed back a 2D grid representing a remote section of the ocean. Your mission is to write an algorithm that can calculate the **Area** of an island when given a starting coordinate.
+
+### 🗺️ The Map Rules
+* The map is a 2D array: `1` = **Land**, `0` = **Water**.
+* **Islands** are formed by connecting land tiles 4-directionally (**North, South, East, West**). 
+* Diagonals do **not** count.
+
+---
+
+### 🚀 The Mission: `getIslandArea(grid, row, col)`
+
+Write a function that takes the grid and a starting point. It should return the total number of connected land tiles.
+
+
+
+#### Example Scenario
+Look at the map below:
+
+```javascript
+const worldMap = [
+  [1, 1, 0, 0],
+  [1, 1, 0, 0],
+  [0, 0, 0, 1],
+  [0, 0, 1, 1]
+];
+
+// If we start at (0,0):
+getIslandArea(worldMap, 0, 0); // Should return 4
+
+// If we start at (3,3):
+getIslandArea(worldMap, 3, 3); // Should return 3
+```
+
+<Tabs>
+
+  <TabItem value="try" label="Try" default>
+    <LiveCode
+      code={`// Write your solution here
+let worldMap = [
+  [0, 1, 1, 0],
+  [1, 1, 0, 0],
+  [0, 0, 0, 1],
+  [0, 0, 1, 1]
+];
+
+
+const islandFinder = (arr, r, c) => {
+  
+}
+islandFinder(worldMap, 0, 1)
+`}
+    />
+  </TabItem>
+
+  <TabItem value="solution" label="Solution">
+  ```javascript
+let worldMap = [
+  [0, 1, 1, 0],
+  [1, 1, 0, 0],
+  [0, 0, 0, 1],
+  [0, 0, 1, 1]
+];
+
+const islandFinder = (arr, r, c) => {
+  let count = 0;
+
+  // PILLAR 1: The "Border Guard" & Water Check
+  // We use OR (||) because if ANY of these are true, the path is a dead end.
+  // We check boundaries BEFORE we check the array value to prevent crashes!
+  if (r < 0 || r >= arr.length || c < 0 || c >= arr[0].length || arr[r][c] === 0) {
+    return count; // Returns 0, effectively turning the explorer around.
+  } else {
+    
+    // PILLAR 2: The "Digital Breadcrumb"
+    // We 'sink' the land by turning it to 0. 
+    // This prevents the "Infinite Loop" where neighbors keep visiting each other.
+    arr[r][c] = 0;
+
+    // PILLAR 3: The "Recursive Dive"
+    // We count ourselves (1), then recruit "Junior Explorers" for all 4 directions.
+    count += 1; 
+    
+    // Each of these calls "pauses" the current function until the scout returns a value.
+    count += islandFinder(arr, r + 1, c); // South
+    count += islandFinder(arr, r - 1, c); // North
+    count += islandFinder(arr, r, c + 1); // East
+    count += islandFinder(arr, r, c - 1); // West
+
+    // Finally, we report the total sum back up to the "Lead Explorer."
+    return count;
+  }
+}
+
+// Execution: Starting at (0,1) will trigger a chain reaction to find the 4 connected tiles.
+console.log("Total Island Area:", islandFinder(worldMap, 0, 1));
+  ```
+  </TabItem>
+
+</Tabs>

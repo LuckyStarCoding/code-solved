@@ -1,6 +1,5 @@
 ---
-id: graphs
-title: "Phase 3: Graphs (BFS/DFS)"
+title: "Graphs (BFS/DFS)"
 sidebar_label: "Graphs"
 description: "Navigating complex relationships using Breadth-First and Depth-First Search algorithms."
 ---

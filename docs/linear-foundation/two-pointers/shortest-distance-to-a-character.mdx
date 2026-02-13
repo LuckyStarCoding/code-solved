@@ -1,13 +1,12 @@
 ---
-slug: blog/2025/shortest-distance-to-a-character
+
 title: Shortest Distance to a Character
-authors: [luckystar]
-tags: [jstask, 2025, Arrays, Two-Pass Strategy]
-date: 2025-12-02
+tags: [Two-Pass Strategy]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
 You are given a string `s` and a character `c` that is guaranteed to appear at least once in `s`.
 
@@ -57,6 +56,19 @@ To solve this efficiently in **O(N) time**, we use two separate linear passes ov
 
 This ensures that every index holds the absolute minimum distance to any `c` in the string.
 </TabItem>
+
+<TabItem value="try" label="Try">
+  <LiveCode
+    code={`
+let shortestToChar = (str, c) => {
+ // Your code goes here
+};
+
+shortestToChar("loveleetcode", "e") // [3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]
+`}
+  />
+</TabItem>
+
 <TabItem value="solution" label="Solution" >
 ```jsx 
 /**

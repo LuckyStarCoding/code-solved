@@ -47,6 +47,10 @@ algoSidebar: [
         'linear-foundation/two-pointers/valid-palindrome-with-one-deletion',
         'linear-foundation/two-pointers/boats-to-save-people',
         'linear-foundation/two-pointers/di-string-match',
+
+        'linear-foundation/two-pointers/shortest-distance-to-a-character',
+       // 'linear-foundation/two-pointers/sort-colors',
+       // 'linear-foundation/two-pointers/maximum-water-trapped-between-walls',
       ],
     },
     {
@@ -74,26 +78,97 @@ algoSidebar: [
         'linear-foundation/prefix-sum/pii-audit-prefix-sums-in-strings',
       ],
     },
+
+        {
+      type: 'category',
+      label: 'Intervals',
+      link: {
+        type: 'doc',
+        id: 'linear-foundation/intervals/intro',
+      },
+      items: [
+         'linear-foundation/intervals/merge-overlapping-intervals',
+
+        // 'linear-foundation/intervals/meeting-calendar',
+        // 'linear-foundation/intervals/minimum-meeting-rooms-needed',
+        // 'linear-foundation/intervals/disjoint-intervals',
+      ],
+    },
+
   ],
 },
     {
       type: 'category',
-      label: 'Phase 2. Logic of Organization',
+      label: 'Logic of Organization',
       collapsed: true,
+      link: { type: 'generated-index' },
       items: [
-        'Phase 2. Logic of Organization/binary-search', 
-        'Phase 2. Logic of Organization/recursion-backtracking',
-        'Phase 2. Logic of Organization/sorting',
+            {
+      type: 'category',
+      label: 'Binary Search',
+      link: {
+        type: 'doc',
+        id: 'logic-of-organization/binary-search/intro',
+      },
+      items: [
+       // 'logic-of-organization/binary-search/find-an-element-in-the-rotated-array',
+       // 'logic-of-organization/binary-search/search-insert-position',
+       // 'logic-of-organization/binary-search/search-in-rotated-sorted-array',
+      ],
+    },
+
+    {
+      type: 'category',
+      label: 'Recursion',
+      link: {
+        type: 'doc',
+        id: 'logic-of-organization/recursion/intro',
+      },
+      items: [
+       // 'logic-of-organization/recursion/carrying-the-digits',
+       // 'logic-of-organization/recursion/staircase-climbing-combinations',
+       // 'logic-of-organization/recursion/add-binary',
+      ],
+    },
+
+    {
+      type: 'category',
+      label: 'Sorting',
+      link: {
+        type: 'doc',
+        id: 'logic-of-organization/sorting/intro',
+      },
+      items: [
+       // 'logic-of-organization/sorting/data-merging',
+       // 'logic-of-organization/sorting/selection-sort',
+       // 'logic-of-organization/sorting/insertion-sort',
+       // 'logic-of-organization/sorting/quick-sort',
+       // 'logic-of-organization/sorting/bubble-sort',
+       // 'logic-of-organization/sorting/next-permutation',
+      ],
+    },
+
       ],
     },
     {
       type: 'category',
-      label: 'Phase 3. The Connected Web',
+      label: 'The Connected Web',
       collapsed: true,
+      link: { type: 'generated-index' },
       items: [
-        'Phase 3. The Connected Web/trees',
-        'Phase 3. The Connected Web/graphs',
-        'Phase 3. The Connected Web/heaps',
+        {
+      type: 'category',
+      label: 'Graph',
+      link: {
+        type: 'doc',
+        id: 'the-connected-web/graph/intro',
+      },
+      items: [
+       'the-connected-web/graph/breadth-first-search',
+       'the-connected-web/graph/depth-first-search',
+      ],
+    },
+        'the-connected-web/heaps',
       ],
     },
     {
@@ -101,9 +176,9 @@ algoSidebar: [
       label: 'Phase 4. The Optimization Peak',
       collapsed: true,
       items: [
-        'Phase 4. The Optimization Peak/dynamic-programming',
-        'Phase 4. The Optimization Peak/tries',
-        'Phase 4. The Optimization Peak/bit-manipulation',
+        'the-optimization-peak/dynamic-programming',
+        'the-optimization-peak/tries',
+        'the-optimization-peak/bit-manipulation',
       ],
     },
   ],

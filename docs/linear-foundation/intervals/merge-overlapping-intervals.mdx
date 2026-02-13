@@ -1,13 +1,11 @@
 ---
-slug: blog/2025/merge-overlapping-intervals
 title: Merge Overlapping Intervals
-authors: [luckystar]
-tags: [jstask, 2025, Intervals]
-date: 2025-10-17
+tags: [Merge Intervals]
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
 
 Given an array of intervals where each interval is represented as [start, end]. 
 Each pair denotes the start and end of an interval on a number line. 
@@ -24,6 +22,18 @@ Merge all overlapping intervals in the array and return an array of non-overlapp
 * mergeOverlappingIntervals([[1,5],[2,4],[4,6],[7,8]]) ➞ [[1,6],[7,8]]
 
 </TabItem>
+
+<TabItem value="try" label="Try">
+<LiveCode
+  code={`
+const mergeOverlappingIntervals = (intervals) => {
+
+}
+mergeOverlappingIntervals([[1,5],[2,4],[4,6],[7,8]]) //[[1,6],[7,8]]
+`}
+/>
+</TabItem>
+
 
 <TabItem value="solution" label="Solution" >
 ```jsx 
@@ -43,7 +53,6 @@ function mergeOverlappingIntervals(iv) {
  }
     return m;
 }
-
 ```
 </TabItem>
 

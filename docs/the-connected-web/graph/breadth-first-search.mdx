@@ -1,0 +1,229 @@
+---
+title: "Matrix Traversal (BFS)"
+description: "Mastering the Ripple Effect in Graph theory."
+tags: [Queue]
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import LiveCode from "@site/src/components/LiveCode";
+
+# BFS: Mastering the Ripple Effect
+
+To master Matrix Traversal/BFS, I want you to imagine a **Ripple in a Pond**. But first, let's look at the challenge that requires this mental model.
+
+---
+
+## 📋 The Challenge: Deadly Virus
+> **Problem:** Identify the spread of a deadly virus in a 2D grid.
+> - **Input:** A 2D array `persons` containing affected persons `'V'` and unaffected persons `'P'`.
+> - **Action:** Each hour, every infected person spreads the virus to one person Up, Down, Left, and Right.
+> - **Task:** Return the updated array after `n` hours.
+
+
+
+---
+
+## 🌊 The Association: The Ripple Effect
+
+Imagine you drop a stone into a perfectly still pond.
+
+* **The Stone:** This is your starting point (the `'V'` in the grid).
+* **The First Ripple:** One second later, the water immediately touching the stone moves.
+* **The Second Ripple:** The next second, the water touching the first ripple moves.
+
+> **The Key Rule:** A ripple cannot jump over a row of water to reach the far side. It must touch its immediate neighbors first. That is exactly what **Breadth** means—you explore everything at "Distance 1" before you even look at "Distance 2."
+
+---
+
+## 🧠 The Logic: The "Waiting Line" (The Queue)
+
+If Sliding Window is an inchworm, BFS is a **Strict Waiting Line (Queue)** at a coffee shop.
+
+* **First Come, First Served:** You put the starting "infected" person in line.
+* **Processing:** You take the person at the front of the line, look at their 4 neighbors (Up, Down, Left, Right), and if they are "healthy," you infect them and put them at the back of the line.
+* **The "Hour" Marker:** To track time ($n$ hours), you process everyone currently in the line before moving to the new people who just joined.
+
+---
+
+## 🛠️ The Step-by-Step Blueprint
+
+When you see a grid problem asking about "spread," "shortest path," or "neighbors," follow this checklist:
+
+1.  **Find the Source:** Scan the grid. Anyone who is already `'V'` gets put into your **Queue**.
+2.  **Define the Compass:** Create a list of directions: `[Up, Down, Left, Right]`.
+3.  **The Loop:** While the line isn't empty and time remains:
+    * Take a **Snapshot** of how many people are in line right now.
+    * For each of those people, check their neighbors using your compass.
+    * If a neighbor is valid (In-Bounds) and healthy (`'P'`), change them to `'V'` and add them to the back of the line.
+
+---
+## 🎬 Visualizing the Ripple: Step-by-Step
+
+Let's trace how the virus spreads using the example input over **2 hours**.
+
+### **Initial State (Hour 0)**
+We start with one infected person at `[1, 0]`.
+```javascript
+[
+  ["P", "P", "P", "P", "P"],
+  ["V", "P", "P", "P", "P"], // <-- Patient Zero at [1, 0]
+  ["P", "P", "P", "P", "P"],
+  ["P", "P", "P", "P", "P"],
+  ["P", "P", "P", "P", "P"]
+]
+```
+
+### **Hour 1: The First Ripple**
+
+The virus looks **Up**, **Down**, and **Right** (Left is out of bounds). It finds three `'P'` neighbors and infects them.
+
+* **Up:** `[0, 0]` becomes `V`
+* **Down:** `[2, 0]` becomes `V`
+* **Right:** `[1, 1]` becomes `V`
+
+```javascript
+[
+  ["V", "P", "P", "P", "P"], // New Infection
+  ["V", "V", "P", "P", "P"], // [1,0] stayed V, [1,1] is New
+  ["V", "P", "P", "P", "P"], // New Infection
+  ["P", "P", "P", "P", "P"],
+  ["P", "P", "P", "P", "P"]
+]
+```
+
+### **Hour 2: The Second Ripple**
+
+Now, all **three** people infected in Hour 1 act as sources. They spread to their neighbors simultaneously. Notice how the shape expands outward like a wave, filling in the "breadth" of the grid.
+
+```javascript
+[
+  ["V", "V", "P", "P", "P"], // Spreading right from [0,0]
+  ["V", "V", "V", "P", "P"], // Spreading right from [1,1]
+  ["V", "V", "P", "P", "P"], // Spreading right from [2,0]
+  ["V", "P", "P", "P", "P"], // Spreading down from [2,0]
+  ["P", "P", "P", "P", "P"]
+]
+
+```
+---
+
+## 🧱 The Four Pillars of BFS
+
+1. **The Queue:** Stores the coordinates of the "active" cells.
+2. **The Directions Array:** A constant list of offsets: `const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];`
+3. **The Boundary Guard:** A security check ensuring you don't look "off the map": `if (newR >= 0 && newR < rows && ...)`
+4. **The Snapshot:** Tracking `queue.length` to separate Hour 1 from Hour 2.
+
+
+
+---
+
+## ⚠️ Security Expert Warnings
+
+* **Boundary Checks:** Never access `array[-1]`. It is the #1 cause of crashes in grid algorithms.
+* **Avoid Infinite Loops:** Always check `if (person === 'P')`. If you re-infect a `'V'`, your queue will grow forever, leading to **Resource Exhaustion**.
+* **Input Validation:** Always verify if the grid is empty before starting. Malformed data is a common entry point for exploits.
+
+---
+
+## 🛡️ Expert Tip: Complexity
+* **Time Complexity:** O(R \times C) — We visit each cell at most once.
+* **Space Complexity:** O(R \times C) — In the worst case, our queue holds a large portion of the grid.
+
+<Tabs>
+
+  <TabItem value="try" label="Try" default>
+    <LiveCode
+      code={`// Write your solution here
+const deadlyVirus = (persons, hrs) => {
+  
+}
+
+deadlyVirus([
+  ["P", "P", "P", "P", "P"],
+  ["V", "P", "P", "P", "P"], 
+  ["P", "P", "P", "P", "P"],
+  ["P", "P", "P", "P", "P"],
+  ["P", "P", "P", "P", "P"]
+], 2)
+
+`}
+    />
+  </TabItem>
+
+  <TabItem value="solution" label="Solution">
+    ```javascript
+    /**
+ * Spreads a virus in a grid over 'n' hours using BFS.
+ * @param {string[][]} persons - The 2D grid of 'V' (infected) and 'P' (healthy).
+ * @param {number} n - The number of hours to simulate.
+ * @returns {string[][]} - The updated grid.
+ */
+function deadlyVirus(persons, n) {
+  // 1. EARLY EXIT: If no time passes, nothing changes.
+  if (n === 0) return persons;
+
+  const rows = persons.length;
+  const cols = persons[0].length;
+  let queue = [];
+
+  // 2. INITIALIZATION: Find all "Patient Zeroes" (the initial 'V's).
+  // This is our starting "Waiting Line."
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (persons[r][c] === "V") {
+        queue.push([r, c]);
+      }
+    }
+  }
+
+  // 3. THE COMPASS: Directions to look for neighbors (Up, Down, Left, Right).
+  const directions = [
+    [-1, 0], // Up
+    [1, 0],  // Down
+    [0, -1], // Left
+    [0, 1],  // Right
+  ];
+
+  // 4. THE RIPPLE LOOP: Continue as long as there is time and people to infect.
+  let hoursPassed = 0;
+  while (queue.length > 0 && hoursPassed < n) {
+    
+    // SNAPSHOT: We only process the people who were sick at the START of this hour.
+    let currentInfectedCount = queue.length;
+
+    for (let i = 0; i < currentInfectedCount; i++) {
+      // Take the person at the front of the waiting line.
+      const [currR, currC] = queue.shift();
+
+      // Check all 4 neighbors.
+      for (const [dr, dc] of directions) {
+        const newR = currR + dr;
+        const newC = currC + dc;
+
+        // SECURITY GUARD: Check if coordinates are in bounds AND person is healthy ('P').
+        if (
+          newR >= 0 && newR < rows && 
+          newC >= 0 && newC < cols && 
+          persons[newR][newC] === "P"
+        ) {
+          // INFECT: Change 'P' to 'V' in the grid.
+          persons[newR][newC] = "V";
+          
+          // ADD TO LINE: This person will spread the virus in the NEXT hour.
+          queue.push([newR, newC]);
+        }
+      }
+    }
+    
+    // Hour complete! Increase the clock.
+    hoursPassed++;
+  }
+
+  return persons;
+}
+    ```
+  </TabItem>
+
+</Tabs>
